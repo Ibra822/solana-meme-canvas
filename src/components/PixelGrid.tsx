@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from '../components/ui/use-toast';
+import PurchaseModal from './PurchaseModal';
 
 interface PixelGridProps {
   onPixelSold: () => void;
@@ -7,6 +8,8 @@ interface PixelGridProps {
 
 const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
   const [takenPixels, setTakenPixels] = useState<Set<number>>(new Set());
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPixelIndex, setSelectedPixelIndex] = useState<number | null>(null);
 
   const handlePixelClick = (index: number) => {
     if (takenPixels.has(index)) {
@@ -18,27 +21,33 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
       return;
     }
 
-    // In a real app, this would open a purchase modal
-    toast({
-      title: "Coming Soon!",
-      description: "Pixel purchasing will be available soon!",
-    });
-    
-    // Simulate purchase for demo
-    setTakenPixels(prev => new Set([...prev, index]));
-    onPixelSold();
+    setSelectedPixelIndex(index);
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedPixelIndex(null);
   };
 
   return (
-    <div className="pixel-grid">
-      {Array.from({ length: 1024 }, (_, i) => (
-        <div
-          key={i}
-          className={`pixel cursor-pointer ${takenPixels.has(i) ? 'taken' : ''}`}
-          onClick={() => handlePixelClick(i)}
-        />
-      ))}
-    </div>
+    <>
+      <div className="pixel-grid">
+        {Array.from({ length: 1024 }, (_, i) => (
+          <div
+            key={i}
+            className={`pixel cursor-pointer ${takenPixels.has(i) ? 'taken' : ''}`}
+            onClick={() => handlePixelClick(i)}
+          />
+        ))}
+      </div>
+
+      <PurchaseModal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        pixelSize={32} // Size in pixels for a single grid cell
+      />
+    </>
   );
 };
 
