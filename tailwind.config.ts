@@ -64,6 +64,7 @@ export default {
       },
       fontFamily: {
         space: ["Space Grotesk", "sans-serif"],
+        pixel: ["Press Start 2P", "cursive"],
       },
       keyframes: {
         "accordion-down": {

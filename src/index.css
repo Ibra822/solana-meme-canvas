@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -49,16 +50,19 @@
   background: theme('colors.solana.purple');
   padding: 1px;
   border-radius: 8px;
+  box-shadow: 0 0 20px rgba(153, 69, 255, 0.3);
 }
 
 .pixel {
   aspect-ratio: 1;
   background: white;
   transition: all 0.2s ease;
+  image-rendering: pixelated;
 }
 
 .pixel:hover {
   background: rgba(153, 69, 255, 0.1);
+  box-shadow: 0 0 8px rgba(153, 69, 255, 0.5);
 }
 
 .pixel.taken {
