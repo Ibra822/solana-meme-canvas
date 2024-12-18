@@ -34,8 +34,8 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
       initialScale={1}
       minScale={0.1}
       maxScale={10}
-      wheel={{ wheelEnabled: true }}
-      pinch={{ pinchEnabled: true }}
+      wheel={{ disabled: false }}
+      pinch={{ disabled: false }}
     >
       <TransformComponent>
         <div 

@@ -69,6 +69,3 @@
 .pixel.taken {
   background: #14F195;
 }
-
-First, let's add the required dependency for zoom functionality:
-<lov-add-dependency>react-zoom-pan-pinch@latest</lov-add-dependency>
