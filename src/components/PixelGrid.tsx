@@ -33,7 +33,7 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
   return (
     <>
       <div className="pixel-grid">
-        {Array.from({ length: 1024 }, (_, i) => (
+        {Array.from({ length: 1000000 }, (_, i) => (
           <div
             key={i}
             className={`pixel cursor-pointer ${takenPixels.has(i) ? 'taken' : ''}`}
@@ -45,7 +45,7 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
       <PurchaseModal
         isOpen={isModalOpen}
         onClose={handleModalClose}
-        pixelSize={32} // Size in pixels for a single grid cell
+        pixelSize={32}
       />
     </>
   );
