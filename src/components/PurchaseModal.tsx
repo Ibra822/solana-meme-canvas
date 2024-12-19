@@ -10,12 +10,11 @@ interface PurchaseModalProps {
   isOpen: boolean;
   onClose: () => void;
   pixelSize: number;
-  price: number;
 }
 
 const WALLET_ADDRESS = "FGvFgGeudc8phyAbzxeixifeHKPonUczM2gSzHR7Hnqy";
 
-const PurchaseModal = ({ isOpen, onClose, pixelSize, price }: PurchaseModalProps) => {
+const PurchaseModal = ({ isOpen, onClose, pixelSize }: PurchaseModalProps) => {
   const [image, setImage] = useState<File | null>(null);
   const [solscanLink, setSolscanLink] = useState("");
   const [transactionHash, setTransactionHash] = useState("");
@@ -46,9 +45,7 @@ const PurchaseModal = ({ isOpen, onClose, pixelSize, price }: PurchaseModalProps
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-[#1A1F2C] to-[#2D243F] text-white">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-pixel text-center text-solana-purple">
-            Buy Pixel for {price} SOL
-          </DialogTitle>
+          <DialogTitle className="text-2xl font-pixel text-center text-solana-purple">Buy Pixels</DialogTitle>
         </DialogHeader>
         
         <div className="grid gap-4 py-4">
@@ -95,7 +92,7 @@ const PurchaseModal = ({ isOpen, onClose, pixelSize, price }: PurchaseModalProps
           >
             <span className="absolute inset-0 bg-gradient-to-r from-solana-purple to-solana-blue opacity-0 group-hover:opacity-30 transition-opacity duration-300"></span>
             <Copy className="w-4 h-4 mr-2" />
-            Send {price} SOL
+            Send SOL
           </Button>
         </div>
       </DialogContent>

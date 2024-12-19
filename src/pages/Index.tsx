@@ -6,7 +6,7 @@ import { Twitter } from 'lucide-react';
 
 const Index = () => {
   const [totalSold, setTotalSold] = useState(0);
-  const totalPixels = 1000000; // Updated to 1 million pixels
+  const totalPixels = 1024; // 32x32 grid
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#1A1F2C] to-[#2D243F]">
