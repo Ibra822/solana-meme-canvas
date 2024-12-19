@@ -37,6 +37,8 @@
   }
   body {
     @apply bg-background text-foreground font-['Inter'];
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-space;
@@ -45,12 +47,17 @@
 
 .pixel-grid {
   display: grid;
-  grid-template-columns: repeat(32, 1fr);
+  grid-template-columns: repeat(1000, 1fr);
   gap: 1px;
   background: theme('colors.solana.purple');
   padding: 1px;
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(153, 69, 255, 0.3);
+  width: 100%;
+  max-width: 100vw;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y pinch-zoom;
 }
 
 .pixel {
@@ -58,6 +65,8 @@
   background: white;
   transition: all 0.2s ease;
   image-rendering: pixelated;
+  min-width: 1px;
+  min-height: 1px;
 }
 
 .pixel:hover {
@@ -67,4 +76,11 @@
 
 .pixel.taken {
   background: #14F195;
+}
+
+@media (max-width: 768px) {
+  .pixel-grid {
+    min-width: 1000px;
+    transform-origin: 0 0;
+  }
 }
