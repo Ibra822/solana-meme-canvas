@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { toast } from '../components/ui/use-toast';
 import PurchaseModal from './PurchaseModal';
+import { calculatePixelPrice } from '../utils/pixelPricing';
 
 interface PixelGridProps {
   onPixelSold: () => void;
@@ -10,6 +11,12 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
   const [takenPixels, setTakenPixels] = useState<Set<number>>(new Set());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPixelIndex, setSelectedPixelIndex] = useState<number | null>(null);
+  const [currentPrice, setCurrentPrice] = useState<number>(0);
+
+  const gridDimensions = {
+    width: 1000,
+    height: 1000
+  };
 
   const handlePixelClick = (index: number) => {
     if (takenPixels.has(index)) {
@@ -21,6 +28,8 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
       return;
     }
 
+    const price = calculatePixelPrice(index, gridDimensions);
+    setCurrentPrice(price);
     setSelectedPixelIndex(index);
     setIsModalOpen(true);
   };
@@ -33,7 +42,7 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
   return (
     <>
       <div className="pixel-grid">
-        {Array.from({ length: 1024 }, (_, i) => (
+        {Array.from({ length: gridDimensions.width * gridDimensions.height }, (_, i) => (
           <div
             key={i}
             className={`pixel cursor-pointer ${takenPixels.has(i) ? 'taken' : ''}`}
@@ -45,7 +54,8 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
       <PurchaseModal
         isOpen={isModalOpen}
         onClose={handleModalClose}
-        pixelSize={32} // Size in pixels for a single grid cell
+        pixelSize={32}
+        price={currentPrice}
       />
     </>
   );
