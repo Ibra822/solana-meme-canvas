@@ -29,21 +29,18 @@
     --ring: 262 100% 64%;
     --radius: 0.5rem;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
   body {
-    @apply bg-[#1A1F2C] text-foreground font-['Inter'];
+    @apply bg-[#1A1F2C] text-foreground;
+    font-family: 'Press Start 2P', cursive;
     background-image: linear-gradient(109.6deg, rgba(223,234,247,1) 11.2%, rgba(244,248,252,1) 91.1%);
     touch-action: manipulation;
     -webkit-text-size-adjust: 100%;
+    height: 100vh;
     overflow: hidden;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-space;
   }
 }
 
@@ -54,7 +51,7 @@
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(153, 69, 255, 0.3);
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 180px); /* Adjust height to prevent scrolling */
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x pan-y pinch-zoom;
