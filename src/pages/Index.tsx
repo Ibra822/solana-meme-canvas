@@ -9,18 +9,11 @@ const Index = () => {
   const totalPixels = 1000000; // 1000x1000 grid
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1A1F2C] to-[#2D243F]">
-      <div className="container mx-auto px-2 h-screen flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-[#1A1F2C] to-[#2D243F] overflow-auto">
+      <div className="container mx-auto px-2 min-h-screen flex flex-col">
         <header className="py-0.5">
           <div className="flex items-center justify-between bg-[#1A1F2C] rounded-lg p-1 border border-solana-purple/20">
-            {/* Left - Site Name */}
-            <div className="flex items-center gap-1">
-              <h1 className="text-[10px] md:text-xs font-pixel bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent leading-relaxed text-left whitespace-nowrap">
-                The Million<br />Solana<br />Memepage
-              </h1>
-            </div>
-
-            {/* Center - Stats */}
+            {/* Left - Stats */}
             <div className="flex items-center gap-1 px-1.5 py-0.5 bg-[#2D243F]/50 rounded-lg border border-solana-purple/20">
               <div className="flex items-center gap-0.5">
                 <span className="h-1 w-1 rounded-full bg-solana-blue"></span>
@@ -31,6 +24,11 @@ const Index = () => {
                 <span className="text-white font-pixel text-[6px]">0.1 SOL/px</span>
               </div>
             </div>
+
+            {/* Center - Site Name */}
+            <h1 className="text-[8px] md:text-[10px] font-pixel bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent leading-relaxed text-center">
+              The Million Solana Memepage
+            </h1>
 
             {/* Right - Live Counter */}
             <div className="relative min-w-[120px]">
