@@ -7,9 +7,9 @@ interface PixelGridProps {
   onPixelSold: () => void;
 }
 
-const CHUNK_SIZE = 100; // Render 100x100 pixels at a time
+const CHUNK_SIZE = 100;
 const TOTAL_SIZE = 1000;
-const BLOCK_SIZE = 10; // Size of purchasable blocks
+const BLOCK_SIZE = 10;
 
 const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
   const [takenPixels, setTakenPixels] = useState<Set<number>>(new Set());
@@ -80,7 +80,6 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
   };
 
   const handlePixelClick = (index: number) => {
-    // Align to 10x10 grid
     const blockStartX = Math.floor((index % TOTAL_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
     const blockStartY = Math.floor(Math.floor(index / TOTAL_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
     const blockStartIndex = blockStartY * TOTAL_SIZE + blockStartX;
@@ -164,7 +163,7 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
       <PurchaseModal
         isOpen={isModalOpen}
         onClose={handleModalClose}
-        pixelSize={BLOCK_SIZE * 32} // 32px per block for preview
+        pixelSize={BLOCK_SIZE * 32}
         price={currentPrice}
       />
     </>

@@ -71,12 +71,11 @@
 }
 
 .pixel:hover {
-  background: rgba(153, 69, 255, 0.1);
-  box-shadow: 0 0 8px rgba(153, 69, 255, 0.5);
+  background: rgba(153, 69, 255, 0.2);
 }
 
 .pixel.taken {
-  background: #9945FF;
+  background: theme('colors.solana.purple');
 }
 
 .block-border {
