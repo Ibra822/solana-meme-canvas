@@ -11,37 +11,37 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#1A1F2C] to-[#2D243F]">
       <div className="container mx-auto px-2 h-screen flex flex-col">
-        <header className="py-1">
-          <div className="flex items-center justify-between bg-[#1A1F2C] rounded-lg p-1.5 border border-solana-purple/20">
+        <header className="py-0.5">
+          <div className="flex items-center justify-between bg-[#1A1F2C] rounded-lg p-1 border border-solana-purple/20">
             {/* Left - Site Name */}
-            <div className="flex items-center gap-2">
-              <h1 className="text-xs md:text-sm font-pixel bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent leading-relaxed text-left whitespace-nowrap">
+            <div className="flex items-center gap-1">
+              <h1 className="text-[10px] md:text-xs font-pixel bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent leading-relaxed text-left whitespace-nowrap">
                 The Million<br />Solana<br />Memepage
               </h1>
             </div>
 
             {/* Center - Stats */}
-            <div className="flex items-center gap-2 px-2 py-0.5 bg-[#2D243F]/50 rounded-lg border border-solana-purple/20">
-              <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 px-1.5 py-0.5 bg-[#2D243F]/50 rounded-lg border border-solana-purple/20">
+              <div className="flex items-center gap-0.5">
                 <span className="h-1 w-1 rounded-full bg-solana-blue"></span>
-                <span className="text-white font-pixel text-[8px]">1M pixels</span>
+                <span className="text-white font-pixel text-[6px]">1M pixels</span>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-0.5">
                 <span className="h-1 w-1 rounded-full bg-solana-purple"></span>
-                <span className="text-white font-pixel text-[8px]">0.1 SOL/px</span>
+                <span className="text-white font-pixel text-[6px]">0.1 SOL/px</span>
               </div>
             </div>
 
             {/* Right - Live Counter */}
-            <div className="relative min-w-[140px]">
-              <div className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-1.5 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)]">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-white font-pixel text-[8px] uppercase tracking-wider">Available</span>
-                  <span className="bg-red-500 text-white text-[6px] px-1.5 rounded-full animate-pulse font-pixel">
+            <div className="relative min-w-[120px]">
+              <div className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-1 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)]">
+                <div className="flex items-center gap-1 mb-0.5">
+                  <span className="text-white font-pixel text-[6px] uppercase tracking-wider">Available</span>
+                  <span className="bg-red-500 text-white text-[4px] px-1 rounded-full animate-pulse font-pixel">
                     LIVE
                   </span>
                 </div>
-                <div className="text-[#1EAEDB] font-bold font-pixel text-[10px]">
+                <div className="text-[#1EAEDB] font-bold font-pixel text-[8px]">
                   {(totalPixels - totalSold).toLocaleString()}
                 </div>
               </div>
@@ -49,12 +49,12 @@ const Index = () => {
           </div>
 
           {/* Navigation Bar */}
-          <nav className="mt-1 bg-gradient-to-r from-solana-purple to-solana-blue p-[1px] rounded-lg">
-            <div className="bg-[#1A1F2C] rounded-lg px-3 py-1 flex items-center justify-center gap-3">
+          <nav className="mt-0.5 bg-gradient-to-r from-solana-purple to-solana-blue p-[1px] rounded-lg">
+            <div className="bg-[#1A1F2C] rounded-lg px-2 py-0.5 flex items-center justify-center gap-2">
               <Button 
                 variant="ghost"
                 size="sm"
-                className="text-white hover:text-solana-blue font-pixel text-[8px] bg-solana-purple/20 hover:bg-solana-purple/30 transition-all h-6"
+                className="text-white hover:text-solana-blue font-pixel text-[6px] bg-solana-purple/20 hover:bg-solana-purple/30 transition-all h-5"
                 onClick={() => window.location.href = '#grid'}
               >
                 Buy Pixels
@@ -62,7 +62,7 @@ const Index = () => {
               <Button 
                 variant="ghost"
                 size="sm"
-                className="text-white hover:text-solana-blue font-pixel text-[8px] bg-solana-purple/20 hover:bg-solana-purple/30 transition-all h-6"
+                className="text-white hover:text-solana-blue font-pixel text-[6px] bg-solana-purple/20 hover:bg-solana-purple/30 transition-all h-5"
                 onClick={() => window.location.href = '#about'}
               >
                 About
@@ -70,7 +70,7 @@ const Index = () => {
               <Button 
                 variant="ghost"
                 size="sm"
-                className="text-white hover:text-solana-blue font-pixel text-[8px] bg-solana-purple/20 hover:bg-solana-purple/30 transition-all h-6 flex items-center gap-1"
+                className="text-white hover:text-solana-blue font-pixel text-[6px] bg-solana-purple/20 hover:bg-solana-purple/30 transition-all h-5 flex items-center gap-0.5"
                 onClick={() => window.open('https://x.com/Abe_Ehidna', '_blank')}
               >
                 <Twitter className="w-2 h-2" />
@@ -80,7 +80,7 @@ const Index = () => {
           </nav>
         </header>
 
-        <div className="py-1">
+        <div className="py-0.5">
           <Stats totalSold={totalSold} totalPixels={totalPixels} />
         </div>
         

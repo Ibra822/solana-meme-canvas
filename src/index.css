@@ -51,7 +51,7 @@
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(153, 69, 255, 0.3);
   width: 100%;
-  height: calc(100vh - 180px); /* Adjust height to prevent scrolling */
+  height: calc(100vh - 180px);
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x pan-y pinch-zoom;
@@ -72,12 +72,11 @@
 }
 
 .pixel.taken {
-  background: theme('colors.solana.purple');
+  background: #9945FF;
 }
 
 .block-border {
-  border-right: 1px solid rgba(153, 69, 255, 0.3);
-  border-bottom: 1px solid rgba(153, 69, 255, 0.3);
+  border: none;
 }
 
 @media (max-width: 768px) {
