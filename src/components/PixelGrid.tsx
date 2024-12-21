@@ -3,6 +3,12 @@ import { toast } from '../components/ui/use-toast';
 import PurchaseModal from './PurchaseModal';
 import { calculatePixelPrice } from '../utils/pixelPricing';
 
+interface PixelData {
+  imageUrl?: string;
+  link?: string;
+  owner?: string;
+}
+
 interface PixelGridProps {
   onPixelSold: () => void;
 }
@@ -12,7 +18,7 @@ const TOTAL_SIZE = 1000;
 const BLOCK_SIZE = 10;
 
 const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
-  const [takenPixels, setTakenPixels] = useState<Set<number>>(new Set());
+  const [takenPixels, setTakenPixels] = useState<Map<number, PixelData>>(new Map());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPixelIndex, setSelectedPixelIndex] = useState<number | null>(null);
   const [currentPrice, setCurrentPrice] = useState<number>(0);
@@ -85,6 +91,11 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
     const blockStartIndex = blockStartY * TOTAL_SIZE + blockStartX;
 
     if (!isBlockAvailable(blockStartIndex)) {
+      const pixelData = takenPixels.get(blockStartIndex);
+      if (pixelData?.link) {
+        window.open(pixelData.link, '_blank');
+        return;
+      }
       toast({
         title: "Block already taken",
         description: "This 10x10 pixel block has already been purchased.",
@@ -102,6 +113,19 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
   const handleModalClose = () => {
     setIsModalOpen(false);
     setSelectedPixelIndex(null);
+  };
+
+  const renderPixelContent = (pixelIndex: number) => {
+    const pixelData = takenPixels.get(pixelIndex);
+    if (pixelData?.imageUrl) {
+      return (
+        <div 
+          className="w-full h-full bg-cover bg-center cursor-pointer"
+          style={{ backgroundImage: `url(${pixelData.imageUrl})` }}
+        />
+      );
+    }
+    return null;
   };
 
   const renderChunk = (chunkIndex: number) => {
@@ -125,7 +149,9 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
                 : ''
             }`}
             onClick={() => handlePixelClick(pixelIndex)}
-          />
+          >
+            {renderPixelContent(blockStartIndex)}
+          </div>
         );
       }
     }
