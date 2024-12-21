@@ -36,7 +36,8 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-['Inter'];
+    @apply bg-[#1A1F2C] text-foreground font-['Inter'];
+    background-image: linear-gradient(109.6deg, rgba(223,234,247,1) 11.2%, rgba(244,248,252,1) 91.1%);
     touch-action: manipulation;
     -webkit-text-size-adjust: 100%;
     overflow: hidden;
@@ -62,7 +63,7 @@
 
 .pixel {
   aspect-ratio: 1;
-  background: white;
+  background: #FEF7CD;
   transition: background-color 0.2s ease;
   image-rendering: pixelated;
   width: 100%;
@@ -75,7 +76,12 @@
 }
 
 .pixel.taken {
-  background: #14F195;
+  background: #F2FCE2;
+}
+
+.block-border {
+  border-right: 1px solid rgba(153, 69, 255, 0.3);
+  border-bottom: 1px solid rgba(153, 69, 255, 0.3);
 }
 
 @media (max-width: 768px) {

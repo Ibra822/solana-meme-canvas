@@ -9,6 +9,7 @@ interface PixelGridProps {
 
 const CHUNK_SIZE = 100; // Render 100x100 pixels at a time
 const TOTAL_SIZE = 1000;
+const BLOCK_SIZE = 10; // Size of purchasable blocks
 
 const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
   const [takenPixels, setTakenPixels] = useState<Set<number>>(new Set());
@@ -63,19 +64,39 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
     };
   }, []);
 
+  const isBlockAvailable = (startIndex: number): boolean => {
+    const startX = startIndex % TOTAL_SIZE;
+    const startY = Math.floor(startIndex / TOTAL_SIZE);
+
+    for (let y = 0; y < BLOCK_SIZE; y++) {
+      for (let x = 0; x < BLOCK_SIZE; x++) {
+        const pixelIndex = (startY + y) * TOTAL_SIZE + (startX + x);
+        if (takenPixels.has(pixelIndex)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
   const handlePixelClick = (index: number) => {
-    if (takenPixels.has(index)) {
+    // Align to 10x10 grid
+    const blockStartX = Math.floor((index % TOTAL_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
+    const blockStartY = Math.floor(Math.floor(index / TOTAL_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
+    const blockStartIndex = blockStartY * TOTAL_SIZE + blockStartX;
+
+    if (!isBlockAvailable(blockStartIndex)) {
       toast({
-        title: "Pixel already taken",
-        description: "This pixel has already been purchased.",
+        title: "Block already taken",
+        description: "This 10x10 pixel block has already been purchased.",
         variant: "destructive",
       });
       return;
     }
 
-    const price = calculatePixelPrice(index, gridDimensions);
+    const price = calculatePixelPrice(blockStartIndex, gridDimensions) * (BLOCK_SIZE * BLOCK_SIZE);
     setCurrentPrice(price);
-    setSelectedPixelIndex(index);
+    setSelectedPixelIndex(blockStartIndex);
     setIsModalOpen(true);
   };
 
@@ -92,10 +113,18 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
     for (let y = 0; y < CHUNK_SIZE; y++) {
       for (let x = 0; x < CHUNK_SIZE; x++) {
         const pixelIndex = (chunkStartY + y) * TOTAL_SIZE + (chunkStartX + x);
+        const blockStartX = Math.floor((pixelIndex % TOTAL_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
+        const blockStartY = Math.floor(Math.floor(pixelIndex / TOTAL_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
+        const blockStartIndex = blockStartY * TOTAL_SIZE + blockStartX;
+        
         pixels.push(
           <div
             key={pixelIndex}
-            className={`pixel cursor-pointer ${takenPixels.has(pixelIndex) ? 'taken' : ''}`}
+            className={`pixel cursor-pointer ${takenPixels.has(blockStartIndex) ? 'taken' : ''} ${
+              (pixelIndex % TOTAL_SIZE) % BLOCK_SIZE === 0 || Math.floor(pixelIndex / TOTAL_SIZE) % BLOCK_SIZE === 0 
+                ? 'block-border' 
+                : ''
+            }`}
             onClick={() => handlePixelClick(pixelIndex)}
           />
         );
@@ -135,7 +164,7 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
       <PurchaseModal
         isOpen={isModalOpen}
         onClose={handleModalClose}
-        pixelSize={32}
+        pixelSize={BLOCK_SIZE * 32} // 32px per block for preview
         price={currentPrice}
       />
     </>
