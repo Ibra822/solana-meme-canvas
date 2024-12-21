@@ -63,7 +63,7 @@
 
 .pixel {
   aspect-ratio: 1;
-  background: #FEF7CD;
+  background: #E5DEFF;
   transition: background-color 0.2s ease;
   image-rendering: pixelated;
   width: 100%;
@@ -76,7 +76,7 @@
 }
 
 .pixel.taken {
-  background: #F2FCE2;
+  background: #9945FF;
 }
 
 .block-border {
@@ -88,5 +88,10 @@
   .pixel-grid {
     min-width: 1000px;
     transform-origin: 0 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .pixel {
+    touch-action: manipulation;
   }
 }
