@@ -13,41 +13,36 @@ interface PixelGridProps {
   onPixelSold: () => void;
 }
 
-const CHUNK_SIZE = 100;
-const TOTAL_SIZE = 1000;
-const BLOCK_SIZE = 10;
+const GRID_SIZE = 1000; // 1000x1000 pixels
+const BLOCK_SIZE = 10; // 10x10 pixel blocks
+const CHUNK_SIZE = 100; // For performance optimization
 
 const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
   const [takenPixels, setTakenPixels] = useState<Map<number, PixelData>>(new Map());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPixelIndex, setSelectedPixelIndex] = useState<number | null>(null);
   const [currentPrice, setCurrentPrice] = useState<number>(0);
-  const [visibleChunks, setVisibleChunks] = useState<number[]>([]);
   const gridRef = useRef<HTMLDivElement>(null);
-
-  const gridDimensions = {
-    width: TOTAL_SIZE,
-    height: TOTAL_SIZE
-  };
+  const [scale, setScale] = useState(1);
+  const [visibleChunks, setVisibleChunks] = useState<number[]>([]);
 
   useEffect(() => {
     const calculateVisibleChunks = () => {
       if (!gridRef.current) return;
-
       const grid = gridRef.current;
       const rect = grid.getBoundingClientRect();
-      const scrollLeft = grid.scrollLeft;
-      const scrollTop = grid.scrollTop;
-
-      const startChunkX = Math.floor(scrollLeft / (CHUNK_SIZE * rect.width / TOTAL_SIZE));
-      const startChunkY = Math.floor(scrollTop / (CHUNK_SIZE * rect.height / TOTAL_SIZE));
-      const endChunkX = Math.min(Math.ceil((scrollLeft + rect.width) / (CHUNK_SIZE * rect.width / TOTAL_SIZE)), TOTAL_SIZE / CHUNK_SIZE);
-      const endChunkY = Math.min(Math.ceil((scrollTop + rect.height) / (CHUNK_SIZE * rect.height / TOTAL_SIZE)), TOTAL_SIZE / CHUNK_SIZE);
-
       const chunks: number[] = [];
+      
+      const startChunkX = Math.floor(grid.scrollLeft / CHUNK_SIZE);
+      const startChunkY = Math.floor(grid.scrollTop / CHUNK_SIZE);
+      const endChunkX = Math.ceil((grid.scrollLeft + rect.width) / CHUNK_SIZE);
+      const endChunkY = Math.ceil((grid.scrollTop + rect.height) / CHUNK_SIZE);
+
       for (let y = startChunkY; y < endChunkY; y++) {
         for (let x = startChunkX; x < endChunkX; x++) {
-          chunks.push(y * (TOTAL_SIZE / CHUNK_SIZE) + x);
+          if (x < GRID_SIZE / CHUNK_SIZE && y < GRID_SIZE / CHUNK_SIZE) {
+            chunks.push(y * (GRID_SIZE / CHUNK_SIZE) + x);
+          }
         }
       }
       setVisibleChunks(chunks);
@@ -71,24 +66,22 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
   }, []);
 
   const isBlockAvailable = (startIndex: number): boolean => {
-    const startX = startIndex % TOTAL_SIZE;
-    const startY = Math.floor(startIndex / TOTAL_SIZE);
+    const startX = startIndex % GRID_SIZE;
+    const startY = Math.floor(startIndex / GRID_SIZE);
 
     for (let y = 0; y < BLOCK_SIZE; y++) {
       for (let x = 0; x < BLOCK_SIZE; x++) {
-        const pixelIndex = (startY + y) * TOTAL_SIZE + (startX + x);
-        if (takenPixels.has(pixelIndex)) {
-          return false;
-        }
+        const pixelIndex = (startY + y) * GRID_SIZE + (startX + x);
+        if (takenPixels.has(pixelIndex)) return false;
       }
     }
     return true;
   };
 
   const handlePixelClick = (index: number) => {
-    const blockStartX = Math.floor((index % TOTAL_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
-    const blockStartY = Math.floor(Math.floor(index / TOTAL_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
-    const blockStartIndex = blockStartY * TOTAL_SIZE + blockStartX;
+    const blockStartX = Math.floor((index % GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
+    const blockStartY = Math.floor(Math.floor(index / GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
+    const blockStartIndex = blockStartY * GRID_SIZE + blockStartX;
 
     if (!isBlockAvailable(blockStartIndex)) {
       const pixelData = takenPixels.get(blockStartIndex);
@@ -98,60 +91,43 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
       }
       toast({
         title: "Block already taken",
-        description: "This 10x10 pixel block has already been purchased.",
+        description: "This block has already been purchased.",
         variant: "destructive",
       });
       return;
     }
 
-    const price = calculatePixelPrice(blockStartIndex, gridDimensions) * (BLOCK_SIZE * BLOCK_SIZE);
+    const price = calculatePixelPrice(blockStartIndex, { width: GRID_SIZE, height: GRID_SIZE });
     setCurrentPrice(price);
     setSelectedPixelIndex(blockStartIndex);
     setIsModalOpen(true);
   };
 
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-    setSelectedPixelIndex(null);
-  };
-
-  const renderPixelContent = (pixelIndex: number) => {
-    const pixelData = takenPixels.get(pixelIndex);
-    if (pixelData?.imageUrl) {
-      return (
-        <div 
-          className="w-full h-full bg-cover bg-center cursor-pointer"
-          style={{ backgroundImage: `url(${pixelData.imageUrl})` }}
-        />
-      );
-    }
-    return null;
-  };
-
   const renderChunk = (chunkIndex: number) => {
-    const chunkStartX = (chunkIndex % (TOTAL_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
-    const chunkStartY = Math.floor(chunkIndex / (TOTAL_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
+    const chunkStartX = (chunkIndex % (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
+    const chunkStartY = Math.floor(chunkIndex / (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
     const pixels = [];
 
     for (let y = 0; y < CHUNK_SIZE; y++) {
       for (let x = 0; x < CHUNK_SIZE; x++) {
-        const pixelIndex = (chunkStartY + y) * TOTAL_SIZE + (chunkStartX + x);
-        const blockStartX = Math.floor((pixelIndex % TOTAL_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
-        const blockStartY = Math.floor(Math.floor(pixelIndex / TOTAL_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
-        const blockStartIndex = blockStartY * TOTAL_SIZE + blockStartX;
+        const pixelIndex = (chunkStartY + y) * GRID_SIZE + (chunkStartX + x);
+        const blockStartX = Math.floor((pixelIndex % GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
+        const blockStartY = Math.floor(Math.floor(pixelIndex / GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
+        const blockStartIndex = blockStartY * GRID_SIZE + blockStartX;
+        
+        const pixelData = takenPixels.get(blockStartIndex);
         
         pixels.push(
           <div
             key={pixelIndex}
-            className={`pixel cursor-pointer ${takenPixels.has(blockStartIndex) ? 'taken' : ''} ${
-              (pixelIndex % TOTAL_SIZE) % BLOCK_SIZE === 0 || Math.floor(pixelIndex / TOTAL_SIZE) % BLOCK_SIZE === 0 
-                ? 'block-border' 
-                : ''
-            }`}
+            className={`pixel ${takenPixels.has(blockStartIndex) ? 'taken' : ''}`}
             onClick={() => handlePixelClick(pixelIndex)}
-          >
-            {renderPixelContent(blockStartIndex)}
-          </div>
+            style={{
+              backgroundImage: pixelData?.imageUrl ? `url(${pixelData.imageUrl})` : 'none',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }}
+          />
         );
       }
     }
@@ -159,13 +135,12 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
     return (
       <div
         key={chunkIndex}
-        className="chunk"
         style={{
           position: 'absolute',
-          left: `${(chunkStartX / TOTAL_SIZE) * 100}%`,
-          top: `${(chunkStartY / TOTAL_SIZE) * 100}%`,
-          width: `${(CHUNK_SIZE / TOTAL_SIZE) * 100}%`,
-          height: `${(CHUNK_SIZE / TOTAL_SIZE) * 100}%`,
+          left: `${(chunkStartX / GRID_SIZE) * 100}%`,
+          top: `${(chunkStartY / GRID_SIZE) * 100}%`,
+          width: `${(CHUNK_SIZE / GRID_SIZE) * 100}%`,
+          height: `${(CHUNK_SIZE / GRID_SIZE) * 100}%`,
           display: 'grid',
           gridTemplateColumns: `repeat(${CHUNK_SIZE}, 1fr)`,
           gap: '1px'
@@ -177,22 +152,39 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
   };
 
   return (
-    <>
+    <div className="w-full h-full flex flex-col">
       <div 
         ref={gridRef}
-        className="pixel-grid"
-        style={{ position: 'relative' }}
+        className="pixel-grid relative w-full aspect-square overflow-auto"
+        style={{
+          width: '100%',
+          maxWidth: '1000px',
+          margin: '0 auto',
+          backgroundColor: '#fff',
+          border: '1px solid rgba(153, 69, 255, 0.3)',
+          boxShadow: '0 0 20px rgba(153, 69, 255, 0.1)'
+        }}
       >
-        {visibleChunks.map(chunkIndex => renderChunk(chunkIndex))}
+        <div 
+          className="absolute"
+          style={{
+            width: `${GRID_SIZE}px`,
+            height: `${GRID_SIZE}px`,
+            transform: `scale(${scale})`,
+            transformOrigin: '0 0'
+          }}
+        >
+          {visibleChunks.map(chunkIndex => renderChunk(chunkIndex))}
+        </div>
       </div>
 
       <PurchaseModal
         isOpen={isModalOpen}
-        onClose={handleModalClose}
-        pixelSize={BLOCK_SIZE * 32}
+        onClose={() => setIsModalOpen(false)}
+        pixelSize={BLOCK_SIZE}
         price={currentPrice}
       />
-    </>
+    </div>
   );
 };
 
