@@ -72,7 +72,7 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
               type="file"
               accept="image/*"
               onChange={(e) => e.target.files && setImage(e.target.files[0])}
-              className="bg-[#2A2F3C] border-solana-purple text-[8px] font-pixel cursor-pointer file:cursor-pointer file:border-0 file:bg-solana-purple/20 file:text-white file:font-pixel hover:file:bg-solana-purple/30 transition-colors"
+              className="bg-[#2A2F3C] border-solana-purple text-[8px] font-pixel cursor-pointer file:cursor-pointer file:border-0 file:bg-solana-purple/20 file:text-white file:font-pixel hover:file:bg-solana-purple/30 transition-colors h-8 min-h-8"
             />
           </div>
 
@@ -87,7 +87,7 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
               placeholder="https://solscan.io/token/..."
               value={solscanLink}
               onChange={(e) => setSolscanLink(e.target.value)}
-              className="bg-[#2A2F3C] border-solana-purple text-[8px] font-pixel placeholder:text-gray-500"
+              className="bg-[#2A2F3C] border-solana-purple text-[8px] font-pixel placeholder:text-gray-500 placeholder:text-[8px] h-8 min-h-8"
             />
           </div>
 
@@ -101,7 +101,7 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
               placeholder="Enter transaction hash..."
               value={transactionHash}
               onChange={(e) => setTransactionHash(e.target.value)}
-              className="bg-[#2A2F3C] border-solana-purple text-[8px] font-pixel placeholder:text-gray-500"
+              className="bg-[#2A2F3C] border-solana-purple text-[8px] font-pixel placeholder:text-gray-500 placeholder:text-[8px] h-8 min-h-8"
             />
           </div>
 
