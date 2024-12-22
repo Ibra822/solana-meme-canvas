@@ -14,9 +14,12 @@ const Stats = ({ totalSold, totalPixels }: StatsProps) => {
         </div>
         <div className="text-[#1EAEDB] font-bold font-pixel text-[10px]">{totalSold}</div>
       </div>
-      <div className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)]">
+      <div className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)] relative">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-white font-pixel text-[8px] uppercase tracking-wider">Available</span>
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#ea384c] text-white text-[8px] px-2 py-0.5 rounded font-pixel animate-[pulse_1s_ease-in-out_infinite]">
+            LIVE
+          </span>
         </div>
         <div className="text-[#1EAEDB] font-bold font-pixel text-[10px]">{totalPixels - totalSold}</div>
       </div>
