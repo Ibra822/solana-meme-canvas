@@ -37,10 +37,6 @@ const Index = () => {
               </Button>
               <div className="flex flex-col items-start gap-1">
                 <div className="flex items-center gap-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-solana-blue"></span>
-                  <span className="text-white font-pixel text-[8px]">1M pixels</span>
-                </div>
-                <div className="flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-solana-purple"></span>
                   <span className="text-white font-pixel text-[8px]">0.1 SOL/px</span>
                 </div>
