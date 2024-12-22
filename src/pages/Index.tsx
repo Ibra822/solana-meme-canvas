@@ -14,6 +14,11 @@ const Index = () => {
   const [totalSold, setTotalSold] = useState(0);
   const totalPixels = 1000000;
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [isSelecting, setIsSelecting] = useState(false);
+
+  const handleBuyPixelsClick = () => {
+    setIsSelecting(true);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#1A1F2C] to-[#2D243F] overflow-auto">
@@ -60,7 +65,7 @@ const Index = () => {
                 variant="ghost"
                 size="sm"
                 className="text-white hover:text-solana-blue font-pixel text-[8px] bg-solana-purple/20 hover:bg-solana-purple/30 transition-all h-6"
-                onClick={() => window.location.href = '#grid'}
+                onClick={handleBuyPixelsClick}
               >
                 Buy Pixels
               </Button>
@@ -90,7 +95,10 @@ const Index = () => {
         </div>
         
         <div id="grid" className="flex-1">
-          <PixelGrid onPixelSold={() => setTotalSold(prev => prev + 1)} />
+          <PixelGrid 
+            onPixelSold={() => setTotalSold(prev => prev + 1)} 
+            onBuyPixelsClick={isSelecting}
+          />
         </div>
 
         <footer className="text-center text-[#9b87f5] py-0.5">
