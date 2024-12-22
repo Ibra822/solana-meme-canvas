@@ -25,8 +25,8 @@ const Index = () => {
       <div className="container mx-auto px-2 min-h-screen flex flex-col">
         <header className="py-1">
           <div className="flex items-center justify-between bg-[#1A1F2C] rounded-lg p-2 border border-solana-purple/20">
-            {/* Left - Stats with Buy Pixels button */}
-            <div className="flex items-center gap-2">
+            {/* Left - Buy Pixels button with stats underneath */}
+            <div className="flex flex-col items-start gap-2">
               <Button 
                 variant="ghost"
                 size="sm"
@@ -35,13 +35,15 @@ const Index = () => {
               >
                 Buy Pixels
               </Button>
-              <div className="flex items-center gap-1">
-                <span className="h-1.5 w-1.5 rounded-full bg-solana-blue"></span>
-                <span className="text-white font-pixel text-[8px]">1M pixels</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="h-1.5 w-1.5 rounded-full bg-solana-purple"></span>
-                <span className="text-white font-pixel text-[8px]">0.1 SOL/px</span>
+              <div className="flex flex-col items-start gap-1">
+                <div className="flex items-center gap-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-solana-blue"></span>
+                  <span className="text-white font-pixel text-[8px]">1M pixels</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-solana-purple"></span>
+                  <span className="text-white font-pixel text-[8px]">0.1 SOL/px</span>
+                </div>
               </div>
             </div>
 
