@@ -82,6 +82,8 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
   };
 
   const handlePixelClick = (index: number) => {
+    if (!isSelecting) return;
+
     const blockStartX = Math.floor((index % GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
     const blockStartY = Math.floor(Math.floor(index / GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
     const blockStartIndex = blockStartY * GRID_SIZE + blockStartX;
@@ -100,17 +102,16 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
       return;
     }
 
-    if (isSelecting) {
-      const price = calculatePixelPrice(blockStartIndex, { width: GRID_SIZE, height: GRID_SIZE });
-      setCurrentPrice(price);
-      setSelectedPixelIndex(blockStartIndex);
-      setIsModalOpen(true);
-      setIsSelecting(false);
-    }
+    const price = calculatePixelPrice(blockStartIndex, { width: GRID_SIZE, height: GRID_SIZE });
+    setCurrentPrice(price);
+    setSelectedPixelIndex(blockStartIndex);
+    setIsModalOpen(true);
+    setIsSelecting(false);
   };
 
   const handleStartSelection = () => {
     setIsSelecting(true);
+    setIsModalOpen(true);
     toast({
       title: "Select a block",
       description: "Click on a 10x10 block to purchase it",
