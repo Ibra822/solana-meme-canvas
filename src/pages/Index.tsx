@@ -28,11 +28,11 @@ const Index = () => {
         <header className="py-1">
           <div className="flex items-center justify-between bg-[#1A1F2C] rounded-lg p-2 border border-solana-purple/20">
             {/* Left - Stats */}
-            <div className="flex items-center gap-2 px-2 py-1 bg-[#2D243F]/50 rounded-lg border border-solana-purple/20">
+            <div className="flex items-center gap-2">
               <Button 
                 variant="ghost"
                 size="sm"
-                className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)] text-white hover:bg-[#1EAEDB]/30 transition-all h-full w-full font-pixel text-[10px]"
+                className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)] text-white hover:bg-[#1EAEDB]/30 transition-all h-8 px-6 font-pixel text-[10px]"
                 onClick={handleBuyPixelsClick}
               >
                 Buy Pixels
