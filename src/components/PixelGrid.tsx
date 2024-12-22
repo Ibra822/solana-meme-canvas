@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { toast } from '../components/ui/use-toast';
 import PurchaseModal from './PurchaseModal';
 import { calculatePixelPrice } from '../utils/pixelPricing';
+import GridControls from './GridControls';
+import GridChunk from './GridChunk';
 
 interface PixelData {
   imageUrl?: string;
@@ -104,68 +106,21 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
       setSelectedPixelIndex(blockStartIndex);
       setIsModalOpen(true);
       setIsSelecting(false);
-    } else {
-      setIsSelecting(true);
-      toast({
-        title: "Select a block",
-        description: "Click on a 10x10 block to purchase it",
-      });
     }
   };
 
-  const renderChunk = (chunkIndex: number) => {
-    const chunkStartX = (chunkIndex % (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
-    const chunkStartY = Math.floor(chunkIndex / (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
-    const pixels = [];
-
-    for (let y = 0; y < CHUNK_SIZE; y++) {
-      for (let x = 0; x < CHUNK_SIZE; x++) {
-        const pixelIndex = (chunkStartY + y) * GRID_SIZE + (chunkStartX + x);
-        const blockStartX = Math.floor((pixelIndex % GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
-        const blockStartY = Math.floor(Math.floor(pixelIndex / GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
-        const blockStartIndex = blockStartY * GRID_SIZE + blockStartX;
-        
-        const pixelData = takenPixels.get(blockStartIndex);
-        const isBlockStart = pixelIndex === blockStartIndex;
-        
-        pixels.push(
-          <div
-            key={pixelIndex}
-            className={`pixel ${takenPixels.has(blockStartIndex) ? 'taken' : ''} ${
-              isBlockStart ? 'block-start' : ''
-            } ${isSelecting ? 'selecting' : ''}`}
-            onClick={() => handlePixelClick(pixelIndex)}
-            style={{
-              backgroundImage: pixelData?.imageUrl ? `url(${pixelData.imageUrl})` : 'none',
-              backgroundSize: `${BLOCK_SIZE}px ${BLOCK_SIZE}px`,
-              backgroundPosition: `${-(pixelIndex % BLOCK_SIZE)}px ${-(Math.floor((pixelIndex % (GRID_SIZE * BLOCK_SIZE)) / GRID_SIZE))}px`
-            }}
-          />
-        );
-      }
-    }
-
-    return (
-      <div
-        key={chunkIndex}
-        style={{
-          position: 'absolute',
-          left: `${(chunkStartX / GRID_SIZE) * 100}%`,
-          top: `${(chunkStartY / GRID_SIZE) * 100}%`,
-          width: `${(CHUNK_SIZE / GRID_SIZE) * 100}%`,
-          height: `${(CHUNK_SIZE / GRID_SIZE) * 100}%`,
-          display: 'grid',
-          gridTemplateColumns: `repeat(${CHUNK_SIZE}, 1fr)`,
-          gap: '1px'
-        }}
-      >
-        {pixels}
-      </div>
-    );
+  const handleStartSelection = () => {
+    setIsSelecting(true);
+    toast({
+      title: "Select a block",
+      description: "Click on a 10x10 block to purchase it",
+    });
   };
 
   return (
     <div className="w-full h-full flex flex-col">
+      <GridControls onStartSelection={handleStartSelection} isSelecting={isSelecting} />
+      
       <div 
         ref={gridRef}
         className="pixel-grid relative w-full aspect-square overflow-auto"
@@ -187,7 +142,25 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
             transformOrigin: '0 0'
           }}
         >
-          {visibleChunks.map(chunkIndex => renderChunk(chunkIndex))}
+          {visibleChunks.map(chunkIndex => {
+            const chunkStartX = (chunkIndex % (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
+            const chunkStartY = Math.floor(chunkIndex / (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
+            
+            return (
+              <GridChunk
+                key={chunkIndex}
+                chunkIndex={chunkIndex}
+                chunkStartX={chunkStartX}
+                chunkStartY={chunkStartY}
+                CHUNK_SIZE={CHUNK_SIZE}
+                GRID_SIZE={GRID_SIZE}
+                BLOCK_SIZE={BLOCK_SIZE}
+                takenPixels={takenPixels}
+                isSelecting={isSelecting}
+                onPixelClick={handlePixelClick}
+              />
+            );
+          })}
         </div>
       </div>
 
