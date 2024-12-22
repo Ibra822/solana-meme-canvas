@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Stats from '../components/Stats';
 import PixelGrid from '../components/PixelGrid';
 import { Button } from '../components/ui/button';
-import { Twitter, Grid, Image, Link as LinkIcon, CreditCard } from 'lucide-react';
+import { Twitter } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -100,80 +100,53 @@ const Index = () => {
         </footer>
 
         <Dialog open={aboutOpen} onOpenChange={setAboutOpen}>
-          <DialogContent className="bg-gradient-to-b from-[#1A1F2C] to-[#2D243F] border-2 border-solana-purple/20 text-white font-pixel max-w-lg mx-auto p-8 rounded-lg shadow-2xl">
-            <DialogHeader className="mb-8">
-              <DialogTitle className="text-center text-xl bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent font-pixel tracking-wider">
+          <DialogContent className="bg-[#1A1F2C] border border-solana-purple/20 text-white font-pixel">
+            <DialogHeader>
+              <DialogTitle className="text-center text-[14px] bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent pb-4">
                 About Solana Pixel Wall
               </DialogTitle>
             </DialogHeader>
-
-            <div className="space-y-8 text-sm leading-relaxed px-2">
-              {/* What is Section */}
-              <div className="bg-[#2A2F3C]/50 p-6 rounded-lg border border-solana-purple/20">
-                <h3 className="text-solana-blue font-bold mb-4 tracking-wide">
-                  What is Solana Pixel Wall?
-                </h3>
-                <p className="text-gray-200">
-                  A unique digital canvas of{" "}
-                  <span className="text-solana-purple font-bold">1,000,000 pixels</span>{" "}
-                  on the Solana blockchain. Reserve your spot, upload your image, and share your link with the world!
+            <div className="space-y-6 text-[10px] leading-relaxed">
+              <div>
+                <h3 className="text-solana-blue mb-2">What is Solana Pixel Wall?</h3>
+                <p>
+                  A unique digital canvas of <span className="text-solana-purple">1,000,000 pixels</span> on the Solana blockchain. Reserve your spot, upload your image, and share your link with the world!
                 </p>
               </div>
 
-              {/* How to Buy Section */}
-              <div className="bg-[#2A2F3C]/50 p-6 rounded-lg border border-solana-purple/20">
-                <h3 className="text-solana-blue font-bold mb-6 tracking-wide">
-                  How to Buy Pixels:
-                </h3>
-                <ol className="space-y-6">
-                  <li className="flex items-start gap-4">
-                    <Grid className="w-6 h-6 text-solana-purple flex-shrink-0 mt-1" />
-                    <div>
-                      <strong className="text-solana-purple block mb-2">1. Choose Your Block</strong>
-                      <p className="text-gray-200 ml-2">
-                        Pixels are sold in <span className="text-solana-purple">10x10 blocks</span> (100 pixels).
-                      </p>
-                    </div>
+              <div>
+                <h3 className="text-solana-blue mb-2">How to Buy Pixels:</h3>
+                <ol className="space-y-4">
+                  <li>
+                    <strong className="text-solana-purple">1. Choose Your Block:</strong>
+                    <ul className="mt-1 ml-4">
+                      <li>- Pixels are sold in <span className="text-solana-purple">10x10 blocks</span> (100 pixels).</li>
+                    </ul>
                   </li>
-                  
-                  <li className="flex items-start gap-4">
-                    <Image className="w-6 h-6 text-solana-purple flex-shrink-0 mt-1" />
-                    <div>
-                      <strong className="text-solana-purple block mb-2">2. Prepare Your Image</strong>
-                      <p className="text-gray-200 ml-2">
-                        Upload a custom image sized exactly <span className="text-solana-purple">10x10 blocks</span> (100x100 pixels).
-                      </p>
-                    </div>
+                  <li>
+                    <strong className="text-solana-purple">2. Prepare Your Image:</strong>
+                    <ul className="mt-1 ml-4">
+                      <li>- Upload a custom image sized exactly <span className="text-solana-purple">10x10 blocks</span> (100x100 pixels).</li>
+                    </ul>
                   </li>
-                  
-                  <li className="flex items-start gap-4">
-                    <LinkIcon className="w-6 h-6 text-solana-purple flex-shrink-0 mt-1" />
-                    <div>
-                      <strong className="text-solana-purple block mb-2">3. Add Your Link</strong>
-                      <p className="text-gray-200 ml-2">
-                        Insert a clickable link to your project, idea, or content.
-                      </p>
-                    </div>
+                  <li>
+                    <strong className="text-solana-purple">3. Add Your Link:</strong>
+                    <ul className="mt-1 ml-4">
+                      <li>- Insert a clickable link to your project, idea, or content.</li>
+                    </ul>
                   </li>
-                  
-                  <li className="flex items-start gap-4">
-                    <CreditCard className="w-6 h-6 text-solana-purple flex-shrink-0 mt-1" />
-                    <div>
-                      <strong className="text-solana-purple block mb-2">4. Complete the Purchase</strong>
-                      <p className="text-gray-200 ml-2">
-                        Pay in SOL and provide the <span className="text-solana-purple">transaction hash</span> to finalize your block reservation.
-                      </p>
-                    </div>
+                  <li>
+                    <strong className="text-solana-purple">4. Complete the Purchase:</strong>
+                    <ul className="mt-1 ml-4">
+                      <li>- Pay in SOL and provide the <span className="text-solana-purple">transaction hash</span> to finalize your block reservation.</li>
+                    </ul>
                   </li>
                 </ol>
               </div>
 
-              {/* Call to Action */}
-              <div className="text-center pt-6">
-                <p className="text-lg font-bold bg-gradient-to-r from-solana-blue to-solana-purple bg-clip-text text-transparent animate-pulse">
-                  Leave your mark on the Solana blockchain today!
-                </p>
-              </div>
+              <p className="text-center text-solana-blue pt-4">
+                Leave your mark on the Solana blockchain today!
+              </p>
             </div>
           </DialogContent>
         </Dialog>
