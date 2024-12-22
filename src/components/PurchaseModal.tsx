@@ -12,11 +12,12 @@ interface PurchaseModalProps {
   pixelSize: number;
   price: number;
   selectedPixelIndex: number | null;
+  onSelectPixels: () => void;
 }
 
 const WALLET_ADDRESS = "FGvFgGeudc8phyAbzxeixifeHKPonUczM2gSzHR7Hnqy";
 
-const PurchaseModal = ({ isOpen, onClose, pixelSize, price, selectedPixelIndex }: PurchaseModalProps) => {
+const PurchaseModal = ({ isOpen, onClose, pixelSize, price, selectedPixelIndex, onSelectPixels }: PurchaseModalProps) => {
   const [image, setImage] = useState<File | null>(null);
   const [solscanLink, setSolscanLink] = useState("");
   const [transactionHash, setTransactionHash] = useState("");
@@ -48,15 +49,15 @@ const PurchaseModal = ({ isOpen, onClose, pixelSize, price, selectedPixelIndex }
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-[#1A1F2C] to-[#2D243F] text-white border border-solana-purple/20">
         <DialogHeader>
-          <DialogTitle className="text-xl font-pixel text-center bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent pb-4">
-            Buy Pixel Block for {price} SOL
+          <DialogTitle className="text-sm font-pixel text-center bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent pb-4">
+            Buy Pixel Block
           </DialogTitle>
         </DialogHeader>
         
-        <div className="grid gap-6 py-4">
+        <div className="grid gap-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="image" className="text-white font-pixel flex items-center gap-2">
-              <Upload className="w-4 h-4" />
+            <Label htmlFor="image" className="text-white font-pixel text-xs flex items-center gap-2">
+              <Upload className="w-3 h-3" />
               Upload Your Meme ({pixelSize}x{pixelSize} pixels)
             </Label>
             <Input
@@ -64,16 +65,13 @@ const PurchaseModal = ({ isOpen, onClose, pixelSize, price, selectedPixelIndex }
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              className="bg-[#2A2F3C] border-solana-purple text-white font-pixel cursor-pointer file:cursor-pointer file:border-0 file:bg-solana-purple/20 file:text-white file:font-pixel hover:file:bg-solana-purple/30 transition-colors"
+              className="bg-[#2A2F3C] border-solana-purple text-xs font-pixel cursor-pointer file:cursor-pointer file:border-0 file:bg-solana-purple/20 file:text-white file:font-pixel hover:file:bg-solana-purple/30 transition-colors"
             />
-            <p className="text-xs text-gray-400 font-pixel">
-              Selected block position: {selectedPixelIndex !== null ? `${Math.floor(selectedPixelIndex / 1000)}, ${selectedPixelIndex % 1000}` : 'None'}
-            </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="solscan" className="text-white font-pixel flex items-center gap-2">
-              <Link className="w-4 h-4" />
+            <Label htmlFor="solscan" className="text-white font-pixel text-xs flex items-center gap-2">
+              <Link className="w-3 h-3" />
               Solscan Link
             </Label>
             <Input
@@ -82,13 +80,13 @@ const PurchaseModal = ({ isOpen, onClose, pixelSize, price, selectedPixelIndex }
               placeholder="https://solscan.io/token/..."
               value={solscanLink}
               onChange={(e) => setSolscanLink(e.target.value)}
-              className="bg-[#2A2F3C] border-solana-purple text-white font-pixel placeholder:text-gray-500"
+              className="bg-[#2A2F3C] border-solana-purple text-xs font-pixel placeholder:text-gray-500"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="hash" className="text-white font-pixel flex items-center gap-2">
-              <Hash className="w-4 h-4" />
+            <Label htmlFor="hash" className="text-white font-pixel text-xs flex items-center gap-2">
+              <Hash className="w-3 h-3" />
               Transaction Hash
             </Label>
             <Input
@@ -96,18 +94,27 @@ const PurchaseModal = ({ isOpen, onClose, pixelSize, price, selectedPixelIndex }
               placeholder="Enter transaction hash..."
               value={transactionHash}
               onChange={(e) => setTransactionHash(e.target.value)}
-              className="bg-[#2A2F3C] border-solana-purple text-white font-pixel placeholder:text-gray-500"
+              className="bg-[#2A2F3C] border-solana-purple text-xs font-pixel placeholder:text-gray-500"
             />
           </div>
 
-          <Button
-            onClick={copyWalletAddress}
-            className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel mt-4 group relative overflow-hidden transition-all duration-300 animate-pulse hover:animate-none"
-          >
-            <div className="absolute inset-0 bg-white/10 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-            <Copy className="w-4 h-4 mr-2" />
-            Send {price} SOL
-          </Button>
+          <div className="flex flex-col gap-2">
+            <Button
+              onClick={copyWalletAddress}
+              className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-xs group relative overflow-hidden transition-all duration-300 animate-pulse hover:animate-none"
+            >
+              <div className="absolute inset-0 bg-white/10 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+              <Copy className="w-3 h-3 mr-2" />
+              Send {price} SOL
+            </Button>
+
+            <Button
+              onClick={onSelectPixels}
+              className="bg-[#2A2F3C] hover:bg-[#363d4f] text-white font-pixel text-xs transition-colors"
+            >
+              Choose Pixels
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

@@ -46,7 +46,7 @@
 
 .pixel-grid {
   background: #fff;
-  padding: 1px;
+  padding: 0;
   border-radius: 4px;
   box-shadow: 0 0 20px rgba(153, 69, 255, 0.1);
   -webkit-overflow-scrolling: touch;
@@ -98,10 +98,11 @@
   left: 0;
   width: 10px;
   height: 10px;
-  border: 1px dashed rgba(153, 69, 255, 0.5);
+  border: none;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.2s ease;
+  background: rgba(153, 69, 255, 0.2);
 }
 
 .pixel.block-start:hover::before,

@@ -45,7 +45,8 @@ const GridChunk = ({
           style={{
             backgroundImage: pixelData?.imageUrl ? `url(${pixelData.imageUrl})` : 'none',
             backgroundSize: `${BLOCK_SIZE}px ${BLOCK_SIZE}px`,
-            backgroundPosition: `${-(pixelIndex % BLOCK_SIZE)}px ${-(Math.floor((pixelIndex % (GRID_SIZE * BLOCK_SIZE)) / GRID_SIZE))}px`
+            backgroundPosition: `${-(pixelIndex % BLOCK_SIZE)}px ${-(Math.floor((pixelIndex % (GRID_SIZE * BLOCK_SIZE)) / GRID_SIZE))}px`,
+            border: 'none'
           }}
         />
       );
@@ -62,7 +63,7 @@ const GridChunk = ({
         height: `${(CHUNK_SIZE / GRID_SIZE) * 100}%`,
         display: 'grid',
         gridTemplateColumns: `repeat(${CHUNK_SIZE}, 1fr)`,
-        gap: '1px'
+        gap: 0
       }}
     >
       {pixels}
