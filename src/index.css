@@ -77,6 +77,11 @@
   transition: background-color 0.2s ease;
   cursor: pointer;
   image-rendering: pixelated;
+  border-right: 1px solid rgba(153, 69, 255, 0.1);
+  border-bottom: 1px solid rgba(153, 69, 255, 0.1);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .pixel:hover {
@@ -85,6 +90,7 @@
 
 .pixel.taken {
   background: #9945FF;
+  border: none;
 }
 
 .pixel.block-start {
@@ -98,7 +104,7 @@
   left: 0;
   width: 10px;
   height: 10px;
-  border: none;
+  border: 1px solid rgba(153, 69, 255, 0.3);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.2s ease;
