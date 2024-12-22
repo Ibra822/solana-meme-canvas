@@ -45,6 +45,19 @@ const PurchaseModal = ({ isOpen, onClose, pixelSize, price, selectedPixelIndex, 
     }
   };
 
+  const handleChoosePixels = () => {
+    if (!image || !solscanLink || !transactionHash) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill out all fields before selecting pixels",
+        variant: "destructive",
+      });
+      return;
+    }
+    onSelectPixels();
+    onClose();
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-[#1A1F2C] to-[#2D243F] text-white border border-solana-purple/20">
@@ -109,7 +122,7 @@ const PurchaseModal = ({ isOpen, onClose, pixelSize, price, selectedPixelIndex, 
             </Button>
 
             <Button
-              onClick={onSelectPixels}
+              onClick={handleChoosePixels}
               className="bg-[#2A2F3C] hover:bg-[#363d4f] text-white font-pixel text-xs transition-colors"
             >
               Choose Pixels

@@ -72,6 +72,8 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   };
 
   const handlePixelClick = (index: number) => {
+    if (!isSelecting) return;
+
     const blockStartX = Math.floor((index % GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
     const blockStartY = Math.floor(Math.floor(index / GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
     const blockStartIndex = blockStartY * GRID_SIZE + blockStartX;
@@ -107,7 +109,8 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
 
   useEffect(() => {
     if (onBuyPixelsClick) {
-      startSelection();
+      setIsModalOpen(true);
+      setIsSelecting(false);
     }
   }, [onBuyPixelsClick]);
 
