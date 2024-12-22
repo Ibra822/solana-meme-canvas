@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
-import { Copy } from "lucide-react";
+import { Copy, Upload, Link, Hash } from "lucide-react";
 
 interface PurchaseModalProps {
   isOpen: boolean;
@@ -30,13 +30,14 @@ const PurchaseModal = ({ isOpen, onClose, pixelSize, price }: PurchaseModalProps
     try {
       await navigator.clipboard.writeText(WALLET_ADDRESS);
       toast({
-        title: "Wallet address copied!",
-        description: "The SOL wallet address has been copied to your clipboard.",
+        title: "Success!",
+        description: "Wallet address copied to clipboard",
+        className: "bg-gradient-to-r from-solana-purple to-solana-blue text-white font-pixel",
       });
     } catch (err) {
       toast({
-        title: "Failed to copy",
-        description: "Please try copying the address manually.",
+        title: "Error",
+        description: "Failed to copy address. Please try manually.",
         variant: "destructive",
       });
     }
@@ -44,56 +45,65 @@ const PurchaseModal = ({ isOpen, onClose, pixelSize, price }: PurchaseModalProps
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-[#1A1F2C] to-[#2D243F] text-white">
+      <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-[#1A1F2C] to-[#2D243F] text-white border border-solana-purple/20">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-pixel text-center text-solana-purple">
-            Buy Pixel for {price} SOL
+          <DialogTitle className="text-xl font-pixel text-center bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent pb-4">
+            Buy Pixel Block for {price} SOL
           </DialogTitle>
         </DialogHeader>
         
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="image" className="text-white">Upload Your Meme</Label>
+        <div className="grid gap-6 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="image" className="text-white font-pixel flex items-center gap-2">
+              <Upload className="w-4 h-4" />
+              Upload Your Meme
+            </Label>
             <Input
               id="image"
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              className="bg-[#2A2F3C] border-solana-purple text-white"
+              className="bg-[#2A2F3C] border-solana-purple text-white font-pixel cursor-pointer file:cursor-pointer file:border-0 file:bg-solana-purple/20 file:text-white file:font-pixel hover:file:bg-solana-purple/30 transition-colors"
             />
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-400 font-pixel">
               Recommended size: {pixelSize}x{pixelSize} pixels
             </p>
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="solscan" className="text-white">Solscan Link</Label>
+          <div className="space-y-2">
+            <Label htmlFor="solscan" className="text-white font-pixel flex items-center gap-2">
+              <Link className="w-4 h-4" />
+              Solscan Link
+            </Label>
             <Input
               id="solscan"
               type="url"
               placeholder="https://solscan.io/token/..."
               value={solscanLink}
               onChange={(e) => setSolscanLink(e.target.value)}
-              className="bg-[#2A2F3C] border-solana-purple text-white"
+              className="bg-[#2A2F3C] border-solana-purple text-white font-pixel placeholder:text-gray-500"
             />
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="hash" className="text-white">Transaction Hash</Label>
+          <div className="space-y-2">
+            <Label htmlFor="hash" className="text-white font-pixel flex items-center gap-2">
+              <Hash className="w-4 h-4" />
+              Transaction Hash
+            </Label>
             <Input
               id="hash"
               placeholder="Enter transaction hash..."
               value={transactionHash}
               onChange={(e) => setTransactionHash(e.target.value)}
-              className="bg-[#2A2F3C] border-solana-purple text-white"
+              className="bg-[#2A2F3C] border-solana-purple text-white font-pixel placeholder:text-gray-500"
             />
           </div>
 
           <Button
             onClick={copyWalletAddress}
-            className="bg-solana-purple hover:bg-opacity-80 text-white font-pixel mt-4 group relative overflow-hidden"
+            className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel mt-4 group relative overflow-hidden transition-all duration-300 animate-pulse hover:animate-none"
           >
-            <span className="absolute inset-0 bg-gradient-to-r from-solana-purple to-solana-blue opacity-0 group-hover:opacity-30 transition-opacity duration-300"></span>
+            <div className="absolute inset-0 bg-white/10 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
             <Copy className="w-4 h-4 mr-2" />
             Send {price} SOL
           </Button>
