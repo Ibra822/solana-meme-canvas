@@ -46,7 +46,8 @@ const GridChunk = ({
             backgroundImage: pixelData?.imageUrl ? `url(${pixelData.imageUrl})` : 'none',
             backgroundSize: `${BLOCK_SIZE}px ${BLOCK_SIZE}px`,
             backgroundPosition: `${-(pixelIndex % BLOCK_SIZE)}px ${-(Math.floor((pixelIndex % (GRID_SIZE * BLOCK_SIZE)) / GRID_SIZE))}px`,
-            border: 'none'
+            backgroundColor: isBlockStart ? 'rgba(153, 69, 255, 0.1)' : undefined,
+            border: isBlockStart ? '1px solid rgba(153, 69, 255, 0.2)' : 'none'
           }}
         />
       );

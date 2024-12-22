@@ -8,16 +8,17 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 
 const Index = () => {
   const [totalSold, setTotalSold] = useState(0);
   const totalPixels = 1000000;
   const [aboutOpen, setAboutOpen] = useState(false);
-  const [isSelecting, setIsSelecting] = useState(false);
+  const [showBuyModal, setShowBuyModal] = useState(false);
 
   const handleBuyPixelsClick = () => {
-    setIsSelecting(true);
+    setShowBuyModal(true);
   };
 
   return (
@@ -86,7 +87,7 @@ const Index = () => {
         <div id="grid" className="flex-1">
           <PixelGrid 
             onPixelSold={() => setTotalSold(prev => prev + 1)} 
-            onBuyPixelsClick={handleBuyPixelsClick}
+            onBuyPixelsClick={showBuyModal}
           />
         </div>
 
@@ -102,6 +103,10 @@ const Index = () => {
               <DialogTitle className="text-center text-[14px] bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent pb-4">
                 About Solana Pixel Wall
               </DialogTitle>
+              <DialogDescription className="text-white text-[10px] leading-relaxed">
+                A unique digital canvas of 1,000,000 pixels on the Solana blockchain. 
+                Reserve your spot, upload your image, and share your link with the world!
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-6 text-[10px] leading-relaxed">
               <div>
