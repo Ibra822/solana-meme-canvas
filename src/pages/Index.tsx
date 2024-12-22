@@ -14,10 +14,10 @@ const Index = () => {
   const [totalSold, setTotalSold] = useState(0);
   const totalPixels = 1000000;
   const [aboutOpen, setAboutOpen] = useState(false);
-  const [isSelecting, setIsSelecting] = useState(false);
+  const [showBuyModal, setShowBuyModal] = useState(false);
 
   const handleBuyPixelsClick = () => {
-    setIsSelecting(true);
+    setShowBuyModal(true);
   };
 
   return (
@@ -25,8 +25,16 @@ const Index = () => {
       <div className="container mx-auto px-2 min-h-screen flex flex-col">
         <header className="py-1">
           <div className="flex items-center justify-between bg-[#1A1F2C] rounded-lg p-2 border border-solana-purple/20">
-            {/* Left - Stats */}
-            <div className="flex items-center gap-2 px-2 py-1 bg-[#2D243F]/50 rounded-lg border border-solana-purple/20">
+            {/* Left - Stats with Buy Pixels button */}
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="ghost"
+                size="sm"
+                className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)] text-white hover:bg-[#1EAEDB]/30 transition-all h-full font-pixel text-[10px]"
+                onClick={handleBuyPixelsClick}
+              >
+                Buy Pixels
+              </Button>
               <div className="flex items-center gap-1">
                 <span className="h-1.5 w-1.5 rounded-full bg-solana-blue"></span>
                 <span className="text-white font-pixel text-[8px]">1M pixels</span>
@@ -42,26 +50,12 @@ const Index = () => {
               The Million Solana Memepage
             </h1>
 
-            {/* Right - Buy Pixels Button */}
-            <div className="relative min-w-[140px]">
+            {/* Right - Navigation */}
+            <div className="flex items-center gap-2">
               <Button 
                 variant="ghost"
                 size="sm"
-                className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)] text-white hover:bg-[#1EAEDB]/30 transition-all h-full w-full font-pixel text-[10px]"
-                onClick={handleBuyPixelsClick}
-              >
-                Buy Pixels
-              </Button>
-            </div>
-          </div>
-
-          {/* Navigation Bar */}
-          <nav className="mt-1 bg-gradient-to-r from-solana-purple to-solana-blue p-[1px] rounded-lg">
-            <div className="bg-[#1A1F2C] rounded-lg px-3 py-1 flex items-center justify-center gap-3">
-              <Button 
-                variant="ghost"
-                size="sm"
-                className="text-white hover:text-solana-blue font-pixel text-[10px] bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] hover:bg-[#1EAEDB]/30 transition-all h-8 px-6"
+                className="text-white hover:text-solana-blue font-pixel text-[10px] bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] hover:bg-[#1EAEDB]/30 transition-all h-8"
                 onClick={() => setAboutOpen(true)}
               >
                 About
@@ -69,14 +63,14 @@ const Index = () => {
               <Button 
                 variant="ghost"
                 size="sm"
-                className="text-white hover:text-solana-blue font-pixel text-[10px] bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] hover:bg-[#1EAEDB]/30 transition-all h-8 px-6 flex items-center gap-1"
+                className="text-white hover:text-solana-blue font-pixel text-[10px] bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] hover:bg-[#1EAEDB]/30 transition-all h-8 flex items-center gap-1"
                 onClick={() => window.open('https://x.com/Abe_Ehidna', '_blank')}
               >
                 <Twitter className="w-3 h-3" />
                 Follow
               </Button>
             </div>
-          </nav>
+          </div>
         </header>
 
         <div className="py-1">
@@ -85,8 +79,8 @@ const Index = () => {
         
         <div id="grid" className="flex-1">
           <PixelGrid 
-            onPixelSold={() => setTotalSold(prev => prev + 1)} 
-            onBuyPixelsClick={handleBuyPixelsClick}
+            onPixelSold={() => setTotalSold(prev => prev + 1)}
+            onBuyPixelsClick={showBuyModal}
           />
         </div>
 
