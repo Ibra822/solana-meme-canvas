@@ -80,7 +80,7 @@ const Index = () => {
         <div id="grid" className="flex-1">
           <PixelGrid 
             onPixelSold={() => setTotalSold(prev => prev + 1)}
-            onBuyPixelsClick={showBuyModal}
+            onBuyPixelsClick={handleBuyPixelsClick}
           />
         </div>
 
