@@ -38,23 +38,20 @@ const Index = () => {
             </div>
 
             {/* Center - Site Name */}
-            <h1 className="text-[12px] md:text-[14px] font-pixel bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent leading-relaxed text-center">
+            <h1 className="text-[16px] md:text-[20px] font-pixel bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent leading-relaxed text-center">
               The Million Solana Memepage
             </h1>
 
-            {/* Right - Live Counter */}
+            {/* Right - Buy Pixels Button */}
             <div className="relative min-w-[140px]">
-              <div className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)]">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-white font-pixel text-[8px] uppercase tracking-wider">Available</span>
-                  <span className="bg-red-500 text-white text-[6px] px-1 rounded-full animate-pulse font-pixel">
-                    LIVE
-                  </span>
-                </div>
-                <div className="text-[#1EAEDB] font-bold font-pixel text-[10px]">
-                  {(totalPixels - totalSold).toLocaleString()}
-                </div>
-              </div>
+              <Button 
+                variant="ghost"
+                size="sm"
+                className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)] text-white hover:bg-[#1EAEDB]/30 transition-all h-full w-full font-pixel text-[10px]"
+                onClick={handleBuyPixelsClick}
+              >
+                Buy Pixels
+              </Button>
             </div>
           </div>
 
@@ -64,15 +61,7 @@ const Index = () => {
               <Button 
                 variant="ghost"
                 size="sm"
-                className="text-white hover:text-solana-blue font-pixel text-[8px] bg-solana-purple/20 hover:bg-solana-purple/30 transition-all h-6"
-                onClick={handleBuyPixelsClick}
-              >
-                Buy Pixels
-              </Button>
-              <Button 
-                variant="ghost"
-                size="sm"
-                className="text-white hover:text-solana-blue font-pixel text-[8px] bg-solana-purple/20 hover:bg-solana-purple/30 transition-all h-6"
+                className="text-white hover:text-solana-blue font-pixel text-[10px] bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] hover:bg-[#1EAEDB]/30 transition-all h-8 px-6"
                 onClick={() => setAboutOpen(true)}
               >
                 About
@@ -80,7 +69,7 @@ const Index = () => {
               <Button 
                 variant="ghost"
                 size="sm"
-                className="text-white hover:text-solana-blue font-pixel text-[8px] bg-solana-purple/20 hover:bg-solana-purple/30 transition-all h-6 flex items-center gap-1"
+                className="text-white hover:text-solana-blue font-pixel text-[10px] bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] hover:bg-[#1EAEDB]/30 transition-all h-8 px-6 flex items-center gap-1"
                 onClick={() => window.open('https://x.com/Abe_Ehidna', '_blank')}
               >
                 <Twitter className="w-3 h-3" />

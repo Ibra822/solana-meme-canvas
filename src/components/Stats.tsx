@@ -8,17 +8,23 @@ const Stats = ({ totalSold, totalPixels }: StatsProps) => {
 
   return (
     <div className="grid grid-cols-3 gap-1 max-w-2xl mx-auto">
-      <div className="bg-white/10 p-1 rounded-lg border border-solana-purple/20">
-        <h3 className="text-[8px] font-pixel text-[#9b87f5]">Pixels Sold</h3>
-        <p className="text-xs font-pixel text-solana-purple">{totalSold}</p>
+      <div className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)]">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-white font-pixel text-[8px] uppercase tracking-wider">Pixels Sold</span>
+        </div>
+        <div className="text-[#1EAEDB] font-bold font-pixel text-[10px]">{totalSold}</div>
       </div>
-      <div className="bg-white/10 p-1 rounded-lg border border-solana-purple/20">
-        <h3 className="text-[8px] font-pixel text-[#9b87f5]">Available</h3>
-        <p className="text-xs font-pixel text-solana-purple">{totalPixels - totalSold}</p>
+      <div className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)]">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-white font-pixel text-[8px] uppercase tracking-wider">Available</span>
+        </div>
+        <div className="text-[#1EAEDB] font-bold font-pixel text-[10px]">{totalPixels - totalSold}</div>
       </div>
-      <div className="bg-white/10 p-1 rounded-lg border border-solana-purple/20">
-        <h3 className="text-[8px] font-pixel text-[#9b87f5]">Sold</h3>
-        <p className="text-xs font-pixel text-solana-purple">{percentageSold.toFixed(1)}%</p>
+      <div className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)]">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-white font-pixel text-[8px] uppercase tracking-wider">Sold</span>
+        </div>
+        <div className="text-[#1EAEDB] font-bold font-pixel text-[10px]">{percentageSold.toFixed(1)}%</div>
       </div>
     </div>
   );
