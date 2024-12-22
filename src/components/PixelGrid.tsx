@@ -165,6 +165,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
         pixelSize={BLOCK_SIZE}
         price={currentPrice}
         selectedPixelIndex={selectedPixelIndex}
+        onSelectPixels={startSelection}
       />
     </div>
   );
