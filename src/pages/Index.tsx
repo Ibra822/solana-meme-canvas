@@ -43,16 +43,17 @@ const Index = () => {
               The Million Solana Memepage
             </h1>
 
-            {/* Right - Buy Pixels Button */}
+            {/* Right - Available Stats (Swapped with Buy Pixels) */}
             <div className="relative min-w-[140px]">
-              <Button 
-                variant="ghost"
-                size="sm"
-                className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)] text-white hover:bg-[#1EAEDB]/30 transition-all h-full w-full font-pixel text-[10px]"
-                onClick={handleBuyPixelsClick}
-              >
-                Buy Pixels
-              </Button>
+              <div className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)] relative">
+                <div className="flex items-center gap-2">
+                  <span className="text-white font-pixel text-[8px] uppercase tracking-wider">Available</span>
+                  <span className="absolute right-2 top-2 bg-[#ea384c] text-white px-2 py-0.5 rounded text-[8px] font-pixel animate-pulse">
+                    LIVE
+                  </span>
+                </div>
+                <div className="text-[#1EAEDB] font-bold font-pixel text-[10px]">{totalPixels - totalSold}</div>
+              </div>
             </div>
           </div>
 
@@ -66,6 +67,14 @@ const Index = () => {
                 onClick={() => setAboutOpen(true)}
               >
                 About
+              </Button>
+              <Button 
+                variant="ghost"
+                size="sm"
+                className="text-white hover:text-solana-blue font-pixel text-[10px] bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] hover:bg-[#1EAEDB]/30 transition-all h-8 px-6"
+                onClick={handleBuyPixelsClick}
+              >
+                Buy Pixels
               </Button>
               <Button 
                 variant="ghost"
@@ -87,7 +96,7 @@ const Index = () => {
         <div id="grid" className="flex-1">
           <PixelGrid 
             onPixelSold={() => setTotalSold(prev => prev + 1)} 
-            onBuyPixelsClick={showBuyModal}
+            onBuyPixelsClick={handleBuyPixelsClick}
           />
         </div>
 
