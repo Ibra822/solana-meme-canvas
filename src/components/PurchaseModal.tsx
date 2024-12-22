@@ -11,11 +11,12 @@ interface PurchaseModalProps {
   onClose: () => void;
   pixelSize: number;
   price: number;
+  selectedPixelIndex: number | null;
 }
 
 const WALLET_ADDRESS = "FGvFgGeudc8phyAbzxeixifeHKPonUczM2gSzHR7Hnqy";
 
-const PurchaseModal = ({ isOpen, onClose, pixelSize, price }: PurchaseModalProps) => {
+const PurchaseModal = ({ isOpen, onClose, pixelSize, price, selectedPixelIndex }: PurchaseModalProps) => {
   const [image, setImage] = useState<File | null>(null);
   const [solscanLink, setSolscanLink] = useState("");
   const [transactionHash, setTransactionHash] = useState("");
@@ -56,7 +57,7 @@ const PurchaseModal = ({ isOpen, onClose, pixelSize, price }: PurchaseModalProps
           <div className="space-y-2">
             <Label htmlFor="image" className="text-white font-pixel flex items-center gap-2">
               <Upload className="w-4 h-4" />
-              Upload Your Meme
+              Upload Your Meme ({pixelSize}x{pixelSize} pixels)
             </Label>
             <Input
               id="image"
@@ -66,7 +67,7 @@ const PurchaseModal = ({ isOpen, onClose, pixelSize, price }: PurchaseModalProps
               className="bg-[#2A2F3C] border-solana-purple text-white font-pixel cursor-pointer file:cursor-pointer file:border-0 file:bg-solana-purple/20 file:text-white file:font-pixel hover:file:bg-solana-purple/30 transition-colors"
             />
             <p className="text-xs text-gray-400 font-pixel">
-              Recommended size: {pixelSize}x{pixelSize} pixels
+              Selected block position: {selectedPixelIndex !== null ? `${Math.floor(selectedPixelIndex / 1000)}, ${selectedPixelIndex % 1000}` : 'None'}
             </p>
           </div>
 

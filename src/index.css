@@ -87,6 +87,28 @@
   background: #9945FF;
 }
 
+.pixel.block-start {
+  position: relative;
+}
+
+.pixel.block-start::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border: 1px dashed rgba(153, 69, 255, 0.5);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.pixel.block-start:hover::before,
+.pixel.selecting.block-start::before {
+  opacity: 1;
+}
+
 @media (max-width: 768px) {
   .pixel-grid {
     touch-action: manipulation;

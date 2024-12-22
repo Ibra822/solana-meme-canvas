@@ -13,15 +13,16 @@ interface PixelGridProps {
   onPixelSold: () => void;
 }
 
-const GRID_SIZE = 1000; // 1000x1000 pixels
-const BLOCK_SIZE = 10; // 10x10 pixel blocks
-const CHUNK_SIZE = 100; // For performance optimization
+const GRID_SIZE = 1000;
+const BLOCK_SIZE = 10;
+const CHUNK_SIZE = 100;
 
 const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
   const [takenPixels, setTakenPixels] = useState<Map<number, PixelData>>(new Map());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPixelIndex, setSelectedPixelIndex] = useState<number | null>(null);
   const [currentPrice, setCurrentPrice] = useState<number>(0);
+  const [isSelecting, setIsSelecting] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const [visibleChunks, setVisibleChunks] = useState<number[]>([]);
@@ -97,10 +98,19 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
       return;
     }
 
-    const price = calculatePixelPrice(blockStartIndex, { width: GRID_SIZE, height: GRID_SIZE });
-    setCurrentPrice(price);
-    setSelectedPixelIndex(blockStartIndex);
-    setIsModalOpen(true);
+    if (isSelecting) {
+      const price = calculatePixelPrice(blockStartIndex, { width: GRID_SIZE, height: GRID_SIZE });
+      setCurrentPrice(price);
+      setSelectedPixelIndex(blockStartIndex);
+      setIsModalOpen(true);
+      setIsSelecting(false);
+    } else {
+      setIsSelecting(true);
+      toast({
+        title: "Select a block",
+        description: "Click on a 10x10 block to purchase it",
+      });
+    }
   };
 
   const renderChunk = (chunkIndex: number) => {
@@ -116,16 +126,19 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
         const blockStartIndex = blockStartY * GRID_SIZE + blockStartX;
         
         const pixelData = takenPixels.get(blockStartIndex);
+        const isBlockStart = pixelIndex === blockStartIndex;
         
         pixels.push(
           <div
             key={pixelIndex}
-            className={`pixel ${takenPixels.has(blockStartIndex) ? 'taken' : ''}`}
+            className={`pixel ${takenPixels.has(blockStartIndex) ? 'taken' : ''} ${
+              isBlockStart ? 'block-start' : ''
+            } ${isSelecting ? 'selecting' : ''}`}
             onClick={() => handlePixelClick(pixelIndex)}
             style={{
               backgroundImage: pixelData?.imageUrl ? `url(${pixelData.imageUrl})` : 'none',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
+              backgroundSize: `${BLOCK_SIZE}px ${BLOCK_SIZE}px`,
+              backgroundPosition: `${-(pixelIndex % BLOCK_SIZE)}px ${-(Math.floor((pixelIndex % (GRID_SIZE * BLOCK_SIZE)) / GRID_SIZE))}px`
             }}
           />
         );
@@ -180,9 +193,13 @@ const PixelGrid = ({ onPixelSold }: PixelGridProps) => {
 
       <PurchaseModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setIsSelecting(false);
+        }}
         pixelSize={BLOCK_SIZE}
         price={currentPrice}
+        selectedPixelIndex={selectedPixelIndex}
       />
     </div>
   );
