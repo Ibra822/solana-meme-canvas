@@ -1,164 +1,173 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { toast } from '../components/ui/use-toast';
 import PurchaseModal from './PurchaseModal';
-import { toast } from './ui/use-toast';
-
-interface PixelGridProps {
-  onPixelSold: () => void;
-  onBuyPixelsClick: boolean;
-}
-
-interface PixelData {
-  taken: boolean;
-  color?: string;
-  link?: string;
-}
+import { calculatePixelPrice } from '../utils/pixelPricing';
+import GridChunk from './grid/GridChunk';
+import { PixelData, PixelGridProps } from './grid/types';
 
 const GRID_SIZE = 1000;
 const BLOCK_SIZE = 10;
-const ZOOM_SPEED = 0.1;
-const MIN_ZOOM = 0.5;
-const MAX_ZOOM = 10;
+const CHUNK_SIZE = 100;
 
 const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
-  const [pixels, setPixels] = useState<PixelData[]>(Array(GRID_SIZE * GRID_SIZE).fill({ taken: false }));
-  const [zoom, setZoom] = useState(1);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [selectedPixelIndex, setSelectedPixelIndex] = useState<number | null>(null);
+  const [takenPixels, setTakenPixels] = useState<Map<number, PixelData>>(new Map());
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPixelIndex, setSelectedPixelIndex] = useState<number | null>(null);
+  const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [isSelecting, setIsSelecting] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const [visibleChunks, setVisibleChunks] = useState<number[]>([]);
 
-  const handlePixelClick = (index: number) => {
-    if (isSelecting) {
-      handlePixelSelection(index);
+  useEffect(() => {
+    const calculateVisibleChunks = () => {
+      if (!gridRef.current) return;
+      const grid = gridRef.current;
+      const rect = grid.getBoundingClientRect();
+      const chunks: number[] = [];
+      
+      const startChunkX = Math.floor(grid.scrollLeft / CHUNK_SIZE);
+      const startChunkY = Math.floor(grid.scrollTop / CHUNK_SIZE);
+      const endChunkX = Math.ceil((grid.scrollLeft + rect.width) / CHUNK_SIZE);
+      const endChunkY = Math.ceil((grid.scrollTop + rect.height) / CHUNK_SIZE);
+
+      for (let y = startChunkY; y < endChunkY; y++) {
+        for (let x = startChunkX; x < endChunkX; x++) {
+          if (x < GRID_SIZE / CHUNK_SIZE && y < GRID_SIZE / CHUNK_SIZE) {
+            chunks.push(y * (GRID_SIZE / CHUNK_SIZE) + x);
+          }
+        }
+      }
+      setVisibleChunks(chunks);
+    };
+
+    const handleScroll = () => {
+      requestAnimationFrame(calculateVisibleChunks);
+    };
+
+    const gridElement = gridRef.current;
+    if (gridElement) {
+      gridElement.addEventListener('scroll', handleScroll);
+      calculateVisibleChunks();
     }
-  };
 
-  const handlePixelSelection = (index: number) => {
-    if (!pixels[index].taken) {
-      setSelectedPixelIndex(index);
-      setIsModalOpen(true);
-    } else {
-      toast({
-        title: "Pixel already taken",
-        description: "Please select an available pixel.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleWheel = useCallback((e: WheelEvent) => {
-    e.preventDefault();
-    const delta = -Math.sign(e.deltaY) * ZOOM_SPEED;
-    setZoom(prevZoom => {
-      const newZoom = prevZoom + delta;
-      return Math.min(Math.max(newZoom, MIN_ZOOM), MAX_ZOOM);
-    });
+    return () => {
+      if (gridElement) {
+        gridElement.removeEventListener('scroll', handleScroll);
+      }
+    };
   }, []);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
-  };
+  const isBlockAvailable = (startIndex: number): boolean => {
+    const startX = startIndex % GRID_SIZE;
+    const startY = Math.floor(startIndex / GRID_SIZE);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (isDragging) {
-      setPan({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y,
-      });
+    for (let y = 0; y < BLOCK_SIZE; y++) {
+      for (let x = 0; x < BLOCK_SIZE; x++) {
+        const pixelIndex = (startY + y) * GRID_SIZE + (startX + x);
+        if (takenPixels.has(pixelIndex)) return false;
+      }
     }
+    return true;
   };
 
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
+  const handlePixelClick = (index: number) => {
+    if (!isSelecting) return;
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    setIsDragging(true);
-    setDragStart({ x: touch.clientX - pan.x, y: touch.clientY - pan.y });
-  };
+    const blockStartX = Math.floor((index % GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
+    const blockStartY = Math.floor(Math.floor(index / GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
+    const blockStartIndex = blockStartY * GRID_SIZE + blockStartX;
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (isDragging) {
-      const touch = e.touches[0];
-      setPan({
-        x: touch.clientX - dragStart.x,
-        y: touch.clientY - dragStart.y,
+    if (!isBlockAvailable(blockStartIndex)) {
+      const pixelData = takenPixels.get(blockStartIndex);
+      if (pixelData?.link) {
+        window.open(pixelData.link, '_blank');
+        return;
+      }
+      toast({
+        title: "Block already taken",
+        description: "This block has already been purchased.",
+        variant: "destructive",
       });
+      return;
     }
+
+    const price = calculatePixelPrice(blockStartIndex, { width: GRID_SIZE, height: GRID_SIZE });
+    setCurrentPrice(price);
+    setSelectedPixelIndex(blockStartIndex);
+    setIsModalOpen(true);
+    setIsSelecting(false);
   };
 
-  const handleTouchEnd = () => {
-    setIsDragging(false);
+  const startSelection = () => {
+    setIsSelecting(true);
+    toast({
+      title: "Select a block",
+      description: "Click on a 10x10 block to purchase it",
+    });
   };
 
   useEffect(() => {
-    const grid = gridRef.current;
-    if (grid) {
-      grid.addEventListener('wheel', handleWheel, { passive: false });
-      return () => grid.removeEventListener('wheel', handleWheel);
+    if (onBuyPixelsClick) {
+      startSelection();
     }
-  }, [handleWheel]);
-
-  useEffect(() => {
-    setIsSelecting(onBuyPixelsClick);
   }, [onBuyPixelsClick]);
 
-  const renderPixels = () => {
-    const pixelElements = [];
-    for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-      const isBlockStart = i % BLOCK_SIZE === 0 && Math.floor(i / GRID_SIZE) % BLOCK_SIZE === 0;
-      const pixelClasses = `pixel ${pixels[i].taken ? 'taken' : ''} ${isBlockStart ? 'block-start' : ''}`;
-      
-      pixelElements.push(
-        <div
-          key={i}
-          className={pixelClasses}
-          onClick={() => handlePixelClick(i)}
-          style={{
-            backgroundColor: pixels[i].color,
-            cursor: isSelecting && !pixels[i].taken ? 'pointer' : 'default',
-          }}
-        />
-      );
-    }
-    return pixelElements;
-  };
-
   return (
-    <div className="relative w-full h-full overflow-hidden">
-      <div
+    <div className="w-full h-full flex flex-col">
+      <div 
         ref={gridRef}
-        className="pixel-grid absolute"
+        className="pixel-grid relative w-full aspect-square"
         style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(${GRID_SIZE}, 1px)`,
-          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-          transformOrigin: '0 0',
-          cursor: isDragging ? 'grabbing' : 'grab',
+          width: '100%',
+          maxWidth: '1000px',
+          margin: '0 auto',
+          backgroundColor: '#fff',
+          border: '1px solid rgba(153, 69, 255, 0.3)',
+          boxShadow: '0 0 20px rgba(153, 69, 255, 0.1)'
         }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
       >
-        {renderPixels()}
+        <div 
+          className="absolute"
+          style={{
+            width: `${GRID_SIZE}px`,
+            height: `${GRID_SIZE}px`,
+            transform: `scale(${scale})`,
+            transformOrigin: '0 0'
+          }}
+        >
+          {visibleChunks.map(chunkIndex => {
+            const chunkStartX = (chunkIndex % (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
+            const chunkStartY = Math.floor(chunkIndex / (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
+            
+            return (
+              <GridChunk
+                key={chunkIndex}
+                chunkIndex={chunkIndex}
+                chunkStartX={chunkStartX}
+                chunkStartY={chunkStartY}
+                GRID_SIZE={GRID_SIZE}
+                CHUNK_SIZE={CHUNK_SIZE}
+                BLOCK_SIZE={BLOCK_SIZE}
+                takenPixels={takenPixels}
+                isSelecting={isSelecting}
+                handlePixelClick={handlePixelClick}
+              />
+            );
+          })}
+        </div>
       </div>
 
       <PurchaseModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setIsSelecting(false);
+        }}
         pixelSize={BLOCK_SIZE}
-        price={0.1}
+        price={currentPrice}
         selectedPixelIndex={selectedPixelIndex}
-        onSelectPixels={() => setIsSelecting(true)}
+        onSelectPixels={startSelection}
       />
     </div>
   );
