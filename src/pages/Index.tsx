@@ -42,16 +42,18 @@ const Index = () => {
               The Million Solana Memepage
             </h1>
 
-            {/* Right - Buy Pixels Button */}
-            <div className="relative min-w-[140px]">
-              <Button 
-                variant="ghost"
-                size="sm"
-                className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)] text-white hover:bg-[#1EAEDB]/30 transition-all h-full w-full font-pixel text-[10px]"
-                onClick={handleBuyPixelsClick}
-              >
-                Buy Pixels
-              </Button>
+            {/* Right - Stats with Live Indicator */}
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <span className="absolute -top-1 -right-1 px-1 py-0.5 bg-[#ea384c] text-white text-[8px] font-pixel rounded animate-pulse">
+                  LIVE
+                </span>
+                <div className="bg-[#2D243F]/50 rounded-lg border border-solana-purple/20 px-2 py-1">
+                  <span className="text-white font-pixel text-[8px]">
+                    {totalPixels - totalSold} Available
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -82,12 +84,29 @@ const Index = () => {
         <div className="py-1">
           <Stats totalSold={totalSold} totalPixels={totalPixels} />
         </div>
+
+        {/* Buy Pixels Button */}
+        <div className="w-full max-w-[1000px] mx-auto mb-4">
+          <Button 
+            onClick={handleBuyPixelsClick}
+            className="w-full bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 transition-all font-pixel text-white text-sm py-3 rounded-lg border border-solana-purple/20 shadow-lg hover:shadow-xl"
+          >
+            Buy Pixels
+          </Button>
+        </div>
         
         <div id="grid" className="flex-1">
           <PixelGrid 
             onPixelSold={() => setTotalSold(prev => prev + 1)} 
-            onBuyPixelsClick={handleBuyPixelsClick}
+            onBuyPixelsClick={isSelecting}
           />
+        </div>
+
+        {/* Slogan */}
+        <div className="w-full max-w-[1000px] mx-auto mt-4 mb-2 py-2 px-4 bg-[#1A1F2C] rounded-lg border border-solana-purple/20">
+          <p className="font-pixel text-[10px] text-center bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">
+            Own a piece of Solana history - One pixel at a time!
+          </p>
         </div>
 
         <footer className="text-center text-[#9b87f5] py-0.5">
