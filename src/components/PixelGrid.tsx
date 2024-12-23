@@ -109,8 +109,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
 
   useEffect(() => {
     if (onBuyPixelsClick) {
-      setIsModalOpen(true);
-      setIsSelecting(false);
+      startSelection();
     }
   }, [onBuyPixelsClick]);
 
