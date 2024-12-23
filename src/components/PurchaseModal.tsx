@@ -49,17 +49,17 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-[600px] bg-gradient-to-b from-[#1A1F2C] to-[#2D243F] text-white border border-solana-purple/20 p-8">
-          <DialogHeader className="mb-6 relative">
-            <DialogTitle className="text-lg font-pixel text-center bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent pb-4 after:content-[''] after:block after:w-full after:h-[1px] after:bg-solana-purple/20 after:mt-4">
+        <DialogContent className="sm:max-w-[400px] bg-[#E5DEFF] text-[#2D243F] border border-solana-purple/20 p-6">
+          <DialogHeader className="mb-4">
+            <DialogTitle className="text-[14px] font-pixel text-center bg-gradient-to-r from-solana-purple to-solana-blue bg-clip-text text-transparent">
               Buy Pixel Block
             </DialogTitle>
           </DialogHeader>
           
-          <div className="grid gap-6">
-            <div className="space-y-3">
-              <Label htmlFor="image" className="text-white font-pixel text-[14px] flex items-center gap-2 font-bold">
-                <Upload className="w-4 h-4" />
+          <div className="grid gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="image" className="text-[#2D243F] font-pixel text-[10px] flex items-center gap-2">
+                <Upload className="w-3 h-3" />
                 Upload Your Meme
               </Label>
               <Input
@@ -67,62 +67,66 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
                 type="file"
                 accept="image/*"
                 onChange={(e) => e.target.files && setImage(e.target.files[0])}
-                className="bg-[#2A2F3C] border-solana-purple text-[14px] font-pixel cursor-pointer file:cursor-pointer file:border-0 file:bg-solana-purple/20 file:text-white file:font-pixel hover:file:bg-solana-purple/30 transition-colors h-12 min-h-12 placeholder:text-gray-400"
-                placeholder="Upload your 10x10 image file"
+                className="bg-white/50 border-solana-purple/20 text-[10px] font-pixel cursor-pointer file:cursor-pointer file:border-0 file:bg-solana-purple/20 file:text-[#2D243F] file:font-pixel hover:file:bg-solana-purple/30 transition-colors h-8"
               />
             </div>
 
-            <div className="space-y-3">
-              <Label htmlFor="solscan" className="text-white font-pixel text-[14px] flex items-center gap-2 font-bold">
-                <Link className="w-4 h-4" />
+            <div className="space-y-2">
+              <Label htmlFor="solscan" className="text-[#2D243F] font-pixel text-[10px] flex items-center gap-2">
+                <Link className="w-3 h-3" />
                 Solscan Link
               </Label>
               <Input
                 id="solscan"
                 type="url"
-                placeholder="Enter your Solscan transaction link"
+                placeholder="Enter Solscan link"
                 value={solscanLink}
                 onChange={(e) => setSolscanLink(e.target.value)}
-                className="bg-[#2A2F3C] border-solana-purple text-[14px] font-pixel placeholder:text-gray-400 h-12 min-h-12"
+                className="bg-white/50 border-solana-purple/20 text-[10px] font-pixel h-8"
               />
             </div>
 
-            <div className="space-y-3">
-              <Label htmlFor="hash" className="text-white font-pixel text-[14px] flex items-center gap-2 font-bold">
-                <Hash className="w-4 h-4" />
+            <div className="space-y-2">
+              <Label htmlFor="hash" className="text-[#2D243F] font-pixel text-[10px] flex items-center gap-2">
+                <Hash className="w-3 h-3" />
                 Transaction Hash
               </Label>
               <Input
                 id="hash"
-                placeholder="Enter your transaction hash"
+                placeholder="Enter transaction hash"
                 value={transactionHash}
                 onChange={(e) => setTransactionHash(e.target.value)}
-                className="bg-[#2A2F3C] border-solana-purple text-[14px] font-pixel placeholder:text-gray-400 h-12 min-h-12"
+                className="bg-white/50 border-solana-purple/20 text-[10px] font-pixel h-8"
               />
             </div>
 
-            <div className="flex flex-col gap-4 pt-2">
-              <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-2 pt-2">
+              <div className="grid grid-cols-2 gap-2">
                 <Button
                   onClick={handleChoosePixels}
-                  className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[14px] h-12 transition-all duration-300 hover:brightness-110"
+                  className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[10px] h-8"
                 >
                   Choose Pixels
                 </Button>
 
                 <Button
                   onClick={copyWalletAddress}
-                  className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[14px] h-12 transition-all duration-300 hover:brightness-110"
+                  className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[10px] h-8"
                 >
-                  <Copy className="w-4 h-4 mr-2" />
+                  <Copy className="w-3 h-3 mr-1" />
                   Send SOL
                 </Button>
               </div>
               
-              <p className="text-center text-[12px] font-pixel text-gray-400 mt-4">
+              <p className="text-center text-[10px] font-pixel text-[#2D243F]/70 mt-2">
                 Need help? Contact us via{" "}
-                <a href="#" className="text-solana-purple hover:text-solana-blue transition-colors">
-                  Discord
+                <a 
+                  href="https://t.me/secelev" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-solana-purple hover:text-solana-blue transition-colors"
+                >
+                  Telegram
                 </a>
               </p>
             </div>
@@ -131,9 +135,9 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
       </Dialog>
 
       <Dialog open={showPixelSelector} onOpenChange={setShowPixelSelector}>
-        <DialogContent className="sm:max-w-[800px] bg-gradient-to-b from-[#1A1F2C] to-[#2D243F] text-white border border-solana-purple/20 p-8">
+        <DialogContent className="sm:max-w-[800px] bg-[#E5DEFF] text-[#2D243F] border border-solana-purple/20 p-6">
           <DialogHeader>
-            <DialogTitle className="text-lg font-pixel text-center bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent pb-4 after:content-[''] after:block after:w-full after:h-[1px] after:bg-solana-purple/20 after:mt-4">
+            <DialogTitle className="text-[14px] font-pixel text-center bg-gradient-to-r from-solana-purple to-solana-blue bg-clip-text text-transparent">
               Select Pixel Blocks
             </DialogTitle>
           </DialogHeader>
