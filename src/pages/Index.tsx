@@ -27,15 +27,9 @@ const Index = () => {
           <div className="flex items-center justify-between bg-[#1A1F2C] rounded-lg p-2 border border-solana-purple/20">
             {/* Left side */}
             <div className="flex items-center gap-2">
-              <Button 
-                variant="ghost"
-                size="sm"
-                className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)] text-white hover:bg-[#1EAEDB]/30 transition-all h-8 font-pixel text-[10px] flex items-center gap-2"
-                onClick={handleBuyPixelsClick}
-              >
-                Buy Pixels
-                <span className="text-[8px] opacity-75">(0.1 SOL/px)</span>
-              </Button>
+              <div className="text-white font-pixel text-[10px] bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2">
+                1M pixels • 0.1 SOL/px
+              </div>
             </div>
 
             {/* Center - Site Name */}
@@ -65,6 +59,17 @@ const Index = () => {
             </div>
           </div>
         </header>
+
+        <div className="py-2 flex justify-center">
+          <Button 
+            variant="ghost"
+            size="sm"
+            className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)] text-white hover:bg-[#1EAEDB]/30 transition-all h-8 font-pixel text-[10px]"
+            onClick={handleBuyPixelsClick}
+          >
+            Buy Pixels
+          </Button>
+        </div>
 
         <div className="py-1">
           <Stats totalSold={totalSold} totalPixels={totalPixels} />
