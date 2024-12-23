@@ -117,7 +117,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
     <div className="w-full h-full flex flex-col">
       <div 
         ref={gridRef}
-        className="pixel-grid relative w-full aspect-square overflow-auto"
+        className="pixel-grid relative w-full aspect-square"
         style={{
           width: '100%',
           maxWidth: '1000px',

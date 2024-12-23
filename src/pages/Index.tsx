@@ -93,7 +93,7 @@ const Index = () => {
         <div className="w-full max-w-[400px] mx-auto mb-6 mt-4">
           <Button 
             onClick={handleBuyPixelsClick}
-            className="w-full bg-gradient-to-r from-solana-purple via-[#B975FF] to-solana-blue hover:opacity-90 transition-all font-pixel text-white text-sm py-2 rounded-lg border border-solana-purple/20 shadow-lg hover:shadow-xl transform hover:scale-105 duration-200"
+            className="w-full btn-animated bg-gradient-to-r from-solana-purple via-[#B975FF] to-solana-blue hover:opacity-90 transition-all font-pixel text-white text-sm py-2 rounded-lg border border-solana-purple/20 shadow-lg hover:shadow-xl transform hover:scale-105 duration-200"
           >
             Buy Pixels
           </Button>
