@@ -34,8 +34,6 @@ const GridChunk = ({
       
       const pixelData = takenPixels.get(blockStartIndex);
       const isBlockStart = pixelIndex === blockStartIndex;
-      const isBlockPixel = Math.floor((pixelIndex % GRID_SIZE) / BLOCK_SIZE) === Math.floor((blockStartIndex % GRID_SIZE) / BLOCK_SIZE) &&
-                          Math.floor(pixelIndex / GRID_SIZE / BLOCK_SIZE) === Math.floor(blockStartIndex / GRID_SIZE / BLOCK_SIZE);
       
       pixels.push(
         <div
@@ -46,10 +44,9 @@ const GridChunk = ({
           onClick={() => handlePixelClick(pixelIndex)}
           style={{
             backgroundImage: pixelData?.imageUrl ? `url(${pixelData.imageUrl})` : 'none',
-            backgroundColor: isBlockPixel ? '#E5DEFF' : '#fff',
             backgroundSize: `${BLOCK_SIZE}px ${BLOCK_SIZE}px`,
             backgroundPosition: `${-(pixelIndex % BLOCK_SIZE)}px ${-(Math.floor((pixelIndex % (GRID_SIZE * BLOCK_SIZE)) / GRID_SIZE))}px`,
-            border: isBlockPixel ? '1px solid rgba(153, 69, 255, 0.1)' : 'none'
+            border: 'none'
           }}
         />
       );

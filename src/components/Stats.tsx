@@ -16,16 +16,15 @@ const Stats = ({ totalSold, totalPixels }: StatsProps) => {
       </div>
       <div className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)]">
         <div className="flex items-center gap-2 mb-1">
+          <span className="text-white font-pixel text-[8px] uppercase tracking-wider">Available</span>
+        </div>
+        <div className="text-[#1EAEDB] font-bold font-pixel text-[10px]">{totalPixels - totalSold}</div>
+      </div>
+      <div className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)]">
+        <div className="flex items-center gap-2 mb-1">
           <span className="text-white font-pixel text-[8px] uppercase tracking-wider">Sold</span>
         </div>
         <div className="text-[#1EAEDB] font-bold font-pixel text-[10px]">{percentageSold.toFixed(1)}%</div>
-      </div>
-      <div className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)]">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-white font-pixel text-[8px] uppercase tracking-wider">Available</span>
-          <span className="text-red-500 font-pixel text-[8px] animate-pulse">LIVE</span>
-        </div>
-        <div className="text-[#1EAEDB] font-bold font-pixel text-[10px]">{totalPixels - totalSold}</div>
       </div>
     </div>
   );
