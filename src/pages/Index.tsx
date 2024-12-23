@@ -25,22 +25,17 @@ const Index = () => {
       <div className="container mx-auto px-2 min-h-screen flex flex-col">
         <header className="py-1">
           <div className="flex items-center justify-between bg-[#1A1F2C] rounded-lg p-2 border border-solana-purple/20">
-            {/* Left - Buy Pixels button with stats underneath */}
-            <div className="flex flex-col items-start gap-2">
+            {/* Left side */}
+            <div className="flex items-center gap-2">
               <Button 
                 variant="ghost"
                 size="sm"
-                className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)] text-white hover:bg-[#1EAEDB]/30 transition-all h-full font-pixel text-[10px]"
+                className="bg-[#1EAEDB] bg-opacity-20 border border-[#1EAEDB] rounded-lg p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(30,174,219,0.3)] text-white hover:bg-[#1EAEDB]/30 transition-all h-8 font-pixel text-[10px] flex items-center gap-2"
                 onClick={handleBuyPixelsClick}
               >
                 Buy Pixels
+                <span className="text-[8px] opacity-75">(0.1 SOL/px)</span>
               </Button>
-              <div className="flex flex-col items-start gap-1">
-                <div className="flex items-center gap-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-solana-purple"></span>
-                  <span className="text-white font-pixel text-[8px]">0.1 SOL/px</span>
-                </div>
-              </div>
             </div>
 
             {/* Center - Site Name */}
