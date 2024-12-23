@@ -26,14 +26,18 @@ const Index = () => {
         <header className="py-1">
           <div className="flex items-center justify-between bg-[#1A1F2C] rounded-lg p-2 border border-solana-purple/20">
             {/* Left - Stats */}
-            <div className="flex items-center gap-2 px-2 py-1 bg-[#2D243F]/50 rounded-lg border border-solana-purple/20">
-              <div className="flex items-center gap-1">
-                <span className="h-1.5 w-1.5 rounded-full bg-solana-blue"></span>
-                <span className="text-white font-pixel text-[8px]">1M pixels</span>
+            <div className="flex items-center gap-2">
+              <div className="px-3 py-1.5 bg-gradient-to-r from-solana-purple/20 to-solana-blue/20 rounded-lg border border-solana-purple/30">
+                <div className="flex items-center gap-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-solana-blue"></span>
+                  <span className="text-white font-pixel text-[8px]">1M pixels</span>
+                </div>
               </div>
-              <div className="flex items-center gap-1">
-                <span className="h-1.5 w-1.5 rounded-full bg-solana-purple"></span>
-                <span className="text-white font-pixel text-[8px]">0.1 SOL/px</span>
+              <div className="px-3 py-1.5 bg-gradient-to-r from-solana-purple/20 to-solana-blue/20 rounded-lg border border-solana-purple/30">
+                <div className="flex items-center gap-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-solana-purple"></span>
+                  <span className="text-white font-pixel text-[8px]">0.1 SOL/px</span>
+                </div>
               </div>
             </div>
 
@@ -86,10 +90,10 @@ const Index = () => {
         </div>
 
         {/* Buy Pixels Button */}
-        <div className="w-full max-w-[1000px] mx-auto mb-4">
+        <div className="w-full max-w-[400px] mx-auto mb-4">
           <Button 
             onClick={handleBuyPixelsClick}
-            className="w-full bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 transition-all font-pixel text-white text-sm py-3 rounded-lg border border-solana-purple/20 shadow-lg hover:shadow-xl"
+            className="w-full bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 transition-all font-pixel text-white text-sm py-2 rounded-lg border border-solana-purple/20 shadow-lg hover:shadow-xl transform hover:scale-105 duration-200"
           >
             Buy Pixels
           </Button>
@@ -98,14 +102,17 @@ const Index = () => {
         <div id="grid" className="flex-1">
           <PixelGrid 
             onPixelSold={() => setTotalSold(prev => prev + 1)} 
-            onBuyPixelsClick={isSelecting}
+            onBuyPixelsClick={() => isSelecting}
           />
         </div>
 
         {/* Slogan */}
-        <div className="w-full max-w-[1000px] mx-auto mt-4 mb-2 py-2 px-4 bg-[#1A1F2C] rounded-lg border border-solana-purple/20">
+        <div className="w-full max-w-[1000px] mx-auto mt-4 mb-2 py-2 px-4 bg-gradient-to-r from-[#1A1F2C] to-[#2D243F] rounded-lg border border-solana-purple/20">
           <p className="font-pixel text-[10px] text-center bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">
             Own a piece of Solana history - One pixel at a time!
+          </p>
+          <p className="font-pixel text-[8px] text-center text-solana-purple/60 mt-1">
+            Advertise your project on the first million-pixel canvas on Solana
           </p>
         </div>
 
