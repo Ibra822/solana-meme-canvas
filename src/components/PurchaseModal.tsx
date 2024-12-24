@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
-import { Copy, Upload, Link, Hash } from "lucide-react";
+import { Copy, Upload, Link, Hash, X } from "lucide-react";
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
@@ -18,13 +18,17 @@ interface PurchaseModalProps {
 }
 
 const WALLET_ADDRESS = "FGvFgGeudc8phyAbzxeixifeHKPonUczM2gSzHR7Hnqy";
+const BLOCK_PRICE = 0.1; // Price per pixel in SOL
 
 const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) => {
   const [image, setImage] = useState<File | null>(null);
   const [link, setLink] = useState("");
   const [transactionHash, setTransactionHash] = useState("");
   const [showPixelSelector, setShowPixelSelector] = useState(false);
+  const [selectedBlocks, setSelectedBlocks] = useState<number[]>([]);
   const { connected } = useWallet();
+
+  const totalCost = selectedBlocks.length * BLOCK_PRICE * 100; // 100 pixels per block (10x10)
 
   const copyWalletAddress = async () => {
     try {
@@ -47,6 +51,23 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
     setShowPixelSelector(true);
     onSelectPixels();
     onClose();
+  };
+
+  const clearSelection = () => {
+    setSelectedBlocks([]);
+    toast({
+      title: "Selection Cleared",
+      description: "All blocks have been deselected",
+      className: "bg-gradient-to-r from-solana-purple to-solana-blue text-white font-pixel",
+    });
+  };
+
+  const handleBlockSelect = (blockIndex: number) => {
+    if (selectedBlocks.includes(blockIndex)) {
+      setSelectedBlocks(blocks => blocks.filter(b => b !== blockIndex));
+    } else {
+      setSelectedBlocks(blocks => [...blocks, blockIndex]);
+    }
   };
 
   return (
@@ -151,8 +172,51 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
               Select Pixel Blocks
             </DialogTitle>
           </DialogHeader>
+          
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-[10px] font-pixel text-white/90">
+              Total Cost: {totalCost.toFixed(2)} SOL
+            </span>
+            <Button
+              onClick={clearSelection}
+              variant="outline"
+              size="sm"
+              className="bg-transparent border border-solana-purple/20 text-white/90 hover:bg-solana-purple/20 font-pixel text-[8px]"
+            >
+              <X className="w-3 h-3 mr-1" />
+              Clear Selection
+            </Button>
+          </div>
+
           <div className="h-[500px] overflow-auto">
             {/* The pixel grid will be rendered here by the parent component */}
+          </div>
+
+          <div className="flex justify-end mt-4 gap-2">
+            <Button
+              onClick={() => setShowPixelSelector(false)}
+              variant="outline"
+              className="bg-transparent border border-solana-purple/20 text-white/90 hover:bg-solana-purple/20 font-pixel text-[8px]"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (selectedBlocks.length === 0) {
+                  toast({
+                    title: "No blocks selected",
+                    description: "Please select at least one block to continue",
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                setShowPixelSelector(false);
+                // Proceed to next step (image upload)
+              }}
+              className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px]"
+            >
+              Next
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
