@@ -4,6 +4,7 @@ import PurchaseModal from './PurchaseModal';
 import { calculatePixelPrice } from '../utils/pixelPricing';
 import GridChunk from './grid/GridChunk';
 import { PixelData, PixelGridProps } from './grid/types';
+import { websocketService } from '../services/websocketService';
 
 const GRID_SIZE = 1000;
 const BLOCK_SIZE = 10;
@@ -18,6 +19,26 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const [visibleChunks, setVisibleChunks] = useState<number[]>([]);
+
+  useEffect(() => {
+    // Connect to WebSocket when component mounts
+    websocketService.connect();
+
+    // Subscribe to pixel updates
+    const unsubscribe = websocketService.subscribe(message => {
+      if (message.type === 'pixelUpdate') {
+        setTakenPixels(prev => {
+          const newMap = new Map(prev);
+          newMap.set(message.data.index, message.data.pixelData);
+          return newMap;
+        });
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const calculateVisibleChunks = () => {
@@ -72,18 +93,23 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   };
 
   const handlePixelClick = (index: number) => {
-    if (!isSelecting) return;
+    if (!isSelecting) {
+      const blockStartX = Math.floor((index % GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
+      const blockStartY = Math.floor(Math.floor(index / GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
+      const blockStartIndex = blockStartY * GRID_SIZE + blockStartX;
+      
+      const pixelData = takenPixels.get(blockStartIndex);
+      if (pixelData?.link) {
+        window.open(pixelData.link, '_blank');
+        return;
+      }
+    }
 
     const blockStartX = Math.floor((index % GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
     const blockStartY = Math.floor(Math.floor(index / GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
     const blockStartIndex = blockStartY * GRID_SIZE + blockStartX;
 
     if (!isBlockAvailable(blockStartIndex)) {
-      const pixelData = takenPixels.get(blockStartIndex);
-      if (pixelData?.link) {
-        window.open(pixelData.link, '_blank');
-        return;
-      }
       toast({
         title: "Block already taken",
         description: "This block has already been purchased.",

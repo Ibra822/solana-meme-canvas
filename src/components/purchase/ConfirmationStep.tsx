@@ -4,6 +4,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { toast } from "@/hooks/use-toast";
+import { websocketService } from '../../services/websocketService';
 
 interface ConfirmationStepProps {
   selectedBlocks: number[];
@@ -50,6 +51,15 @@ const ConfirmationStep = ({
       if (confirmation.value.err) {
         throw new Error('Transaction failed');
       }
+
+      // Update pixels via WebSocket after successful payment
+      selectedBlocks.forEach(blockIndex => {
+        websocketService.updatePixel(blockIndex, {
+          imageUrl: imagePreviewUrl || '',
+          link,
+          owner: publicKey.toString()
+        });
+      });
 
       toast({
         title: "Payment successful!",
