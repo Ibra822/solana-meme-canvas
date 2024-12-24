@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 import { Wallet } from 'lucide-react';
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 const WalletButton: FC = () => {
   const { wallet, disconnect, connecting, connected } = useWallet();
