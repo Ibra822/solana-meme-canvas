@@ -6,7 +6,6 @@ import {
   SolflareWalletAdapter,
   TorusWalletAdapter,
   LedgerWalletAdapter,
-  SlopeWalletAdapter,
   CloverWalletAdapter
 } from '@solana/wallet-adapter-wallets';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
@@ -27,7 +26,6 @@ export const SolanaWalletProvider: FC<Props> = ({ children }) => {
       new SolflareWalletAdapter(),
       new TorusWalletAdapter(),
       new LedgerWalletAdapter(),
-      new SlopeWalletAdapter(),
       new CloverWalletAdapter(),
     ],
     []
