@@ -9,6 +9,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import BlockSelector from './purchase/BlockSelector';
 import ImageUploadStep from './purchase/ImageUploadStep';
+import LinkInputStep from './purchase/LinkInputStep';
 
 interface PurchaseModalProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ const BLOCK_PRICE = 0.1;
 const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) => {
   const [currentStep, setCurrentStep] = useState<'initial' | 'select' | 'upload' | 'link'>("initial");
   const [image, setImage] = useState<File | null>(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [link, setLink] = useState("");
   const [transactionHash, setTransactionHash] = useState("");
   const [showPixelSelector, setShowPixelSelector] = useState(false);
@@ -71,6 +73,16 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
     } else {
       setSelectedBlocks(blocks => [...blocks, blockIndex]);
     }
+  };
+
+  const handleImageUpload = (file: File) => {
+    setImage(file);
+    setImagePreviewUrl(URL.createObjectURL(file));
+    setCurrentStep('link');
+  };
+
+  const handleLinkSubmit = (submittedLink: string) => {
+    setLink(submittedLink);
   };
 
   return (
@@ -126,9 +138,17 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
 
           {currentStep === 'upload' && (
             <ImageUploadStep
-              onImageSelect={setImage}
+              onImageSelect={handleImageUpload}
               onNext={() => setCurrentStep('link')}
               selectedBlocksCount={selectedBlocks.length}
+            />
+          )}
+
+          {currentStep === 'link' && (
+            <LinkInputStep
+              onLinkSubmit={handleLinkSubmit}
+              onNext={() => setCurrentStep('initial')}
+              imagePreviewUrl={imagePreviewUrl}
             />
           )}
         </DialogContent>
