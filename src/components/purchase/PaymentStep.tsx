@@ -5,7 +5,6 @@ import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } f
 import { toast } from "@/components/ui/use-toast";
 import { websocketService } from '../../services/websocketService';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { SolanaWalletProvider } from '../WalletProvider';
 
 interface PaymentStepProps {
   selectedBlocks: number[];
@@ -78,9 +77,8 @@ const PaymentStep = ({
   };
 
   return (
-    <SolanaWalletProvider>
-      <div className="space-y-6">
-        <div className="space-y-4">
+    <div className="space-y-6">
+      <div className="space-y-4">
         <div>
           <Label className="text-white/90 font-pixel text-[8px]">Selected Blocks</Label>
           <p className="text-white/70 font-pixel text-[8px]">
@@ -113,22 +111,20 @@ const PaymentStep = ({
           </p>
         </div>
       </div>
-        </div>
 
-        <div className="flex justify-end gap-2">
-          {!connected ? (
-            <WalletMultiButton className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8" />
-          ) : (
-            <Button
-              onClick={handlePayment}
-              className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px]"
-            >
-              Confirm & Pay
-            </Button>
-          )}
-        </div>
+      <div className="flex justify-end gap-2">
+        {!connected ? (
+          <WalletMultiButton className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8" />
+        ) : (
+          <Button
+            onClick={handlePayment}
+            className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px]"
+          >
+            Confirm & Pay
+          </Button>
+        )}
       </div>
-    </SolanaWalletProvider>
+    </div>
   );
 };
 

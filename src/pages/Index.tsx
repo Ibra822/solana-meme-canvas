@@ -129,47 +129,46 @@ const Index = () => {
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-6 text-[10px] leading-relaxed">
-                <div>
-                  <h3 className="text-solana-blue mb-2">What is Solana Pixel Wall?</h3>
-                  <p>
-                    A unique digital canvas of <span className="text-solana-purple">1,000,000 pixels</span> on the Solana blockchain. Reserve your spot, upload your image, and share your link with the world!
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-solana-blue mb-2">How to Buy Pixels:</h3>
-                  <ol className="space-y-4">
-                    <li>
-                      <strong className="text-solana-purple">1. Choose Your Block:</strong>
-                      <ul className="mt-1 ml-4">
-                        <li>- Pixels are sold in <span className="text-solana-purple">10x10 blocks</span> (100 pixels).</li>
-                      </ul>
-                    </li>
-                    <li>
-                      <strong className="text-solana-purple">2. Prepare Your Image:</strong>
-                      <ul className="mt-1 ml-4">
-                        <li>- Upload a custom image sized exactly <span className="text-solana-purple">10x10 blocks</span> (100x100 pixels).</li>
-                      </ul>
-                    </li>
-                    <li>
-                      <strong className="text-solana-purple">3. Add Your Link:</strong>
-                      <ul className="mt-1 ml-4">
-                        <li>- Insert a clickable link to your project, idea, or content.</li>
-                      </ul>
-                    </li>
-                    <li>
-                      <strong className="text-solana-purple">4. Complete the Purchase:</strong>
-                      <ul className="mt-1 ml-4">
-                        <li>- Pay in SOL and provide the <span className="text-solana-purple">transaction hash</span> to finalize your block reservation.</li>
-                      </ul>
-                    </li>
-                  </ol>
-                </div>
-
-                <p className="text-center text-solana-blue pt-4">
-                  Leave your mark on the Solana blockchain today!
+              <div>
+                <h3 className="text-solana-blue mb-2">What is Solana Pixel Wall?</h3>
+                <p>
+                  A unique digital canvas of <span className="text-solana-purple">1,000,000 pixels</span> on the Solana blockchain. Reserve your spot, upload your image, and share your link with the world!
                 </p>
               </div>
+
+              <div>
+                <h3 className="text-solana-blue mb-2">How to Buy Pixels:</h3>
+                <ol className="space-y-4">
+                  <li>
+                    <strong className="text-solana-purple">1. Choose Your Block:</strong>
+                    <ul className="mt-1 ml-4">
+                      <li>- Pixels are sold in <span className="text-solana-purple">10x10 blocks</span> (100 pixels).</li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong className="text-solana-purple">2. Prepare Your Image:</strong>
+                    <ul className="mt-1 ml-4">
+                      <li>- Upload a custom image sized exactly <span className="text-solana-purple">10x10 blocks</span> (100x100 pixels).</li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong className="text-solana-purple">3. Add Your Link:</strong>
+                    <ul className="mt-1 ml-4">
+                      <li>- Insert a clickable link to your project, idea, or content.</li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong className="text-solana-purple">4. Complete the Purchase:</strong>
+                    <ul className="mt-1 ml-4">
+                      <li>- Pay in SOL and provide the <span className="text-solana-purple">transaction hash</span> to finalize your block reservation.</li>
+                    </ul>
+                  </li>
+                </ol>
+              </div>
+
+              <p className="text-center text-solana-blue pt-4">
+                Leave your mark on the Solana blockchain today!
+              </p>
             </div>
           </DialogContent>
         </Dialog>
