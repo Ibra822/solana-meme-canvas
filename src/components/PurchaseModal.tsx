@@ -3,13 +3,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { Copy, Link, Hash } from "lucide-react";
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import BlockSelector from './purchase/BlockSelector';
 import ImageUploadStep from './purchase/ImageUploadStep';
 import LinkInputStep from './purchase/LinkInputStep';
+import ConfirmationStep from './purchase/ConfirmationStep';
 
 interface PurchaseModalProps {
   isOpen: boolean;
@@ -24,7 +25,7 @@ const WALLET_ADDRESS = "FGvFgGeudc8phyAbzxeixifeHKPonUczM2gSzHR7Hnqy";
 const BLOCK_PRICE = 0.1;
 
 const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) => {
-  const [currentStep, setCurrentStep] = useState<'initial' | 'select' | 'upload' | 'link'>("initial");
+  const [currentStep, setCurrentStep] = useState<'initial' | 'select' | 'upload' | 'link' | 'confirm'>("initial");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [link, setLink] = useState("");
@@ -33,7 +34,7 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
   const [selectedBlocks, setSelectedBlocks] = useState<number[]>([]);
   const { connected } = useWallet();
 
-  const totalCost = selectedBlocks.length * BLOCK_PRICE * 100;
+  const totalCost = selectedBlocks.length * BLOCK_PRICE;
 
   const copyWalletAddress = async () => {
     try {
@@ -83,6 +84,22 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
 
   const handleLinkSubmit = (submittedLink: string) => {
     setLink(submittedLink);
+    setCurrentStep('confirm');
+  };
+
+  const handlePaymentSuccess = (txHash: string) => {
+    setTransactionHash(txHash);
+    toast({
+      title: "Purchase Complete!",
+      description: "Your pixels have been successfully purchased",
+      className: "bg-gradient-to-r from-solana-purple to-solana-blue text-white font-pixel",
+    });
+    onClose();
+    setCurrentStep('initial');
+    setSelectedBlocks([]);
+    setImage(null);
+    setImagePreviewUrl(null);
+    setLink("");
   };
 
   return (
@@ -147,8 +164,19 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
           {currentStep === 'link' && (
             <LinkInputStep
               onLinkSubmit={handleLinkSubmit}
-              onNext={() => setCurrentStep('initial')}
+              onNext={() => setCurrentStep('confirm')}
               imagePreviewUrl={imagePreviewUrl}
+            />
+          )}
+
+          {currentStep === 'confirm' && (
+            <ConfirmationStep
+              selectedBlocks={selectedBlocks}
+              imagePreviewUrl={imagePreviewUrl}
+              link={link}
+              totalCost={totalCost}
+              onSuccess={handlePaymentSuccess}
+              recipientAddress={WALLET_ADDRESS}
             />
           )}
         </DialogContent>
