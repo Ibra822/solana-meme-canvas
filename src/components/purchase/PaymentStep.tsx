@@ -2,9 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 import { websocketService } from '../../services/websocketService';
-import { useEffect } from "react";
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
 interface PaymentStepProps {
   selectedBlocks: number[];
@@ -25,17 +25,11 @@ const PaymentStep = ({
 }: PaymentStepProps) => {
   const { connected, publicKey, sendTransaction } = useWallet();
 
-  useEffect(() => {
-    if (connected && publicKey) {
-      handlePayment();
-    }
-  }, [connected, publicKey]);
-
   const handlePayment = async () => {
     if (!publicKey) {
       toast({
         title: "Wallet not connected",
-        description: "Please connect your wallet to continue",
+        description: "Please connect your wallet to continue with the payment",
         variant: "destructive",
       });
       return;
@@ -119,12 +113,14 @@ const PaymentStep = ({
       </div>
 
       <div className="flex justify-end gap-2">
-        {!connected && (
+        {!connected ? (
+          <WalletMultiButton className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8" />
+        ) : (
           <Button
-            className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px]"
             onClick={handlePayment}
+            className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px]"
           >
-            Connect Wallet & Pay
+            Confirm & Pay
           </Button>
         )}
       </div>

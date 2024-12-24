@@ -5,15 +5,7 @@ import { Wallet } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
 const WalletButton: FC = () => {
-  const { wallet, disconnect, connecting, connected } = useWallet();
-
-  const handleError = () => {
-    toast({
-      title: "Connection Failed",
-      description: "Failed to connect. Please try again.",
-      variant: "destructive",
-    });
-  };
+  const { disconnect, connecting, connected } = useWallet();
 
   const handleDisconnect = async () => {
     try {
@@ -31,15 +23,19 @@ const WalletButton: FC = () => {
     }
   };
 
+  if (!connected) {
+    return null;
+  }
+
   return (
     <Button
       variant="default"
       className="wallet-adapter-button bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8"
-      onClick={connected ? handleDisconnect : undefined}
+      onClick={handleDisconnect}
       disabled={connecting}
     >
       <Wallet className="mr-2 h-4 w-4" />
-      {connecting ? 'Connecting...' : connected ? 'Disconnect' : 'Connect Wallet'}
+      {connecting ? 'Connecting...' : 'Disconnect'}
     </Button>
   );
 };
