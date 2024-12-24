@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useWallet } from '@solana/wallet-adapter-react';
-import WalletButton from '../WalletButton';
 import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { toast } from "@/hooks/use-toast";
 import { websocketService } from '../../services/websocketService';
+import { useEffect } from "react";
 
 interface PaymentStepProps {
   selectedBlocks: number[];
@@ -24,6 +24,12 @@ const PaymentStep = ({
   recipientAddress
 }: PaymentStepProps) => {
   const { connected, publicKey, sendTransaction } = useWallet();
+
+  useEffect(() => {
+    if (connected && publicKey) {
+      handlePayment();
+    }
+  }, [connected, publicKey]);
 
   const handlePayment = async () => {
     if (!publicKey) {
@@ -61,15 +67,16 @@ const PaymentStep = ({
       });
 
       toast({
-        title: "Payment successful!",
-        description: "Your pixels have been purchased successfully",
+        title: "Transaction confirmed!",
+        description: "Your pixels are now live on the grid",
+        className: "bg-gradient-to-r from-solana-purple to-solana-blue text-white font-pixel",
       });
       
       onSuccess(signature);
     } catch (error) {
       toast({
-        title: "Payment failed",
-        description: error instanceof Error ? error.message : "Please try again",
+        title: "Transaction failed",
+        description: "Please try again or select another wallet",
         variant: "destructive",
       });
     }
@@ -112,14 +119,12 @@ const PaymentStep = ({
       </div>
 
       <div className="flex justify-end gap-2">
-        {!connected ? (
-          <WalletButton />
-        ) : (
+        {!connected && (
           <Button
-            onClick={handlePayment}
             className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px]"
+            onClick={handlePayment}
           >
-            Confirm & Pay
+            Connect Wallet & Pay
           </Button>
         )}
       </div>
