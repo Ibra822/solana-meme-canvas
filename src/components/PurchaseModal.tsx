@@ -2,10 +2,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import BlockSelector from './purchase/BlockSelector';
+import SelectionGrid from './grid/SelectionGrid';
 import ImageUploadStep from './purchase/ImageUploadStep';
 import LinkInputStep from './purchase/LinkInputStep';
 import PaymentStep from './purchase/PaymentStep';
+import { PixelData } from './grid/types';
 
 interface PurchaseModalProps {
   isOpen: boolean;
@@ -14,42 +15,28 @@ interface PurchaseModalProps {
   price: number;
   selectedPixelIndex: number | null;
   onSelectPixels: () => void;
+  takenPixels: Map<number, PixelData>;
 }
 
 const WALLET_ADDRESS = "FGvFgGeudc8phyAbzxeixifeHKPonUczM2gSzHR7Hnqy";
 const BLOCK_PRICE = 0.1;
 
-const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) => {
+const PurchaseModal = ({ 
+  isOpen, 
+  onClose, 
+  takenPixels 
+}: PurchaseModalProps) => {
   const [currentStep, setCurrentStep] = useState<'initial' | 'select' | 'upload' | 'link' | 'payment'>("initial");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [link, setLink] = useState("");
-  const [showPixelSelector, setShowPixelSelector] = useState(false);
   const [selectedBlocks, setSelectedBlocks] = useState<number[]>([]);
 
   const totalCost = selectedBlocks.length * BLOCK_PRICE;
 
-  const handleChoosePixels = () => {
-    setShowPixelSelector(true);
-    onSelectPixels();
-    onClose();
-  };
-
-  const clearSelection = () => {
-    setSelectedBlocks([]);
-    toast({
-      title: "Selection Cleared",
-      description: "All blocks have been deselected",
-      className: "bg-gradient-to-r from-solana-purple to-solana-blue text-white font-pixel",
-    });
-  };
-
-  const handleBlockSelect = (blockIndex: number) => {
-    if (selectedBlocks.includes(blockIndex)) {
-      setSelectedBlocks(blocks => blocks.filter(b => b !== blockIndex));
-    } else {
-      setSelectedBlocks(blocks => [...blocks, blockIndex]);
-    }
+  const handleSelectionConfirm = (blocks: number[]) => {
+    setSelectedBlocks(blocks);
+    setCurrentStep('upload');
   };
 
   const handleImageUpload = (file: File) => {
@@ -78,98 +65,78 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
   };
 
   return (
-    <>
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-[600px] bg-[#1A1F2C] text-white border border-solana-purple/20 p-8">
-          <DialogHeader className="mb-6">
-            <DialogTitle className="text-[14px] font-pixel text-center bg-gradient-to-r from-solana-purple to-solana-blue bg-clip-text text-transparent">
-              Buy Pixel Block
-            </DialogTitle>
-          </DialogHeader>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[800px] bg-[#1A1F2C] text-white border border-solana-purple/20 p-8">
+        <DialogHeader className="mb-6">
+          <DialogTitle className="text-[14px] font-pixel text-center bg-gradient-to-r from-solana-purple to-solana-blue bg-clip-text text-transparent">
+            {currentStep === 'initial' ? 'Buy Pixel Block' : 
+             currentStep === 'select' ? 'Select Blocks' :
+             currentStep === 'upload' ? 'Upload Image' :
+             currentStep === 'link' ? 'Add Link' : 'Complete Payment'}
+          </DialogTitle>
+        </DialogHeader>
 
-          {currentStep === 'initial' && (
-            <div className="grid gap-6">
-              <div className="flex flex-col gap-3 pt-2">
-                <Button
-                  onClick={handleChoosePixels}
-                  className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8"
+        {currentStep === 'initial' && (
+          <div className="grid gap-6">
+            <div className="flex flex-col gap-3 pt-2">
+              <Button
+                onClick={() => setCurrentStep('select')}
+                className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8"
+              >
+                Choose Blocks
+              </Button>
+              
+              <p className="text-center text-[8px] font-pixel text-white/70 mt-2">
+                Need help? Contact us via{" "}
+                <a 
+                  href="https://t.me/secelev" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-solana-purple hover:text-solana-blue transition-colors"
                 >
-                  Choose Pixels
-                </Button>
-                
-                <p className="text-center text-[8px] font-pixel text-white/70 mt-2">
-                  Need help? Contact us via{" "}
-                  <a 
-                    href="https://t.me/secelev" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="text-solana-purple hover:text-solana-blue transition-colors"
-                  >
-                    Telegram
-                  </a>
-                </p>
-              </div>
+                  Telegram
+                </a>
+              </p>
             </div>
-          )}
+          </div>
+        )}
 
-          {currentStep === 'upload' && (
-            <ImageUploadStep
-              onImageSelect={handleImageUpload}
-              onNext={() => setCurrentStep('link')}
-              selectedBlocksCount={selectedBlocks.length}
-            />
-          )}
-
-          {currentStep === 'link' && (
-            <LinkInputStep
-              onLinkSubmit={handleLinkSubmit}
-              onNext={() => setCurrentStep('payment')}
-              imagePreviewUrl={imagePreviewUrl}
-            />
-          )}
-
-          {currentStep === 'payment' && (
-            <PaymentStep
-              selectedBlocks={selectedBlocks}
-              imagePreviewUrl={imagePreviewUrl}
-              link={link}
-              totalCost={totalCost}
-              onSuccess={handlePaymentSuccess}
-              recipientAddress={WALLET_ADDRESS}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showPixelSelector} onOpenChange={setShowPixelSelector}>
-        <DialogContent className="sm:max-w-[800px] bg-[#1A1F2C] text-white border border-solana-purple/20 p-6">
-          <DialogHeader>
-            <DialogTitle className="text-[12px] font-pixel text-center bg-gradient-to-r from-solana-purple to-solana-blue bg-clip-text text-transparent">
-              Select Pixel Blocks
-            </DialogTitle>
-          </DialogHeader>
-          
-          <BlockSelector
-            selectedBlocks={selectedBlocks}
-            onBlockSelect={handleBlockSelect}
-            onClearSelection={clearSelection}
-            totalCost={totalCost}
-            onNext={() => {
-              if (selectedBlocks.length === 0) {
-                toast({
-                  title: "No blocks selected",
-                  description: "Please select at least one block to continue",
-                  variant: "destructive",
-                });
-                return;
-              }
-              setShowPixelSelector(false);
-              setCurrentStep('upload');
-            }}
+        {currentStep === 'select' && (
+          <SelectionGrid
+            takenPixels={takenPixels}
+            onSelectionConfirm={handleSelectionConfirm}
+            onClose={() => setCurrentStep('initial')}
           />
-        </DialogContent>
-      </Dialog>
-    </>
+        )}
+
+        {currentStep === 'upload' && (
+          <ImageUploadStep
+            onImageSelect={handleImageUpload}
+            onNext={() => setCurrentStep('link')}
+            selectedBlocksCount={selectedBlocks.length}
+          />
+        )}
+
+        {currentStep === 'link' && (
+          <LinkInputStep
+            onLinkSubmit={handleLinkSubmit}
+            onNext={() => setCurrentStep('payment')}
+            imagePreviewUrl={imagePreviewUrl}
+          />
+        )}
+
+        {currentStep === 'payment' && (
+          <PaymentStep
+            selectedBlocks={selectedBlocks}
+            imagePreviewUrl={imagePreviewUrl}
+            link={link}
+            totalCost={totalCost}
+            onSuccess={handlePaymentSuccess}
+            recipientAddress={WALLET_ADDRESS}
+          />
+        )}
+      </DialogContent>
+    </Dialog>
   );
 };
 

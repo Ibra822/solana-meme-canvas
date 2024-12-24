@@ -190,6 +190,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
         price={currentPrice}
         selectedPixelIndex={selectedPixelIndex}
         onSelectPixels={() => setIsSelecting(true)}
+        takenPixels={takenPixels}
       />
     </div>
   );
