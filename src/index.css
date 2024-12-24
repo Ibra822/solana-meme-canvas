@@ -146,3 +146,40 @@
   background-size: 200% 200%;
   animation: gradient 3s ease infinite;
 }
+
+/* Wallet Adapter Custom Styles */
+.wallet-adapter-modal {
+  @apply font-pixel;
+}
+
+.wallet-adapter-modal-wrapper {
+  @apply bg-[#1A1F2C] border border-solana-purple/20;
+}
+
+.wallet-adapter-modal-button-close {
+  @apply bg-solana-purple/20 text-white;
+}
+
+.wallet-adapter-modal-title {
+  @apply text-[14px] bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent;
+}
+
+.wallet-adapter-modal-list {
+  @apply grid grid-cols-2 gap-2;
+}
+
+.wallet-adapter-button {
+  @apply bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8 justify-center items-center;
+}
+
+.wallet-adapter-modal-list-more {
+  @apply text-solana-purple hover:text-solana-blue transition-colors;
+}
+
+.wallet-adapter-dropdown-list {
+  @apply bg-[#1A1F2C] border border-solana-purple/20;
+}
+
+.wallet-adapter-dropdown-list-item {
+  @apply text-white hover:bg-solana-purple/20 transition-colors;
+}

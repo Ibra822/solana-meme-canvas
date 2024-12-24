@@ -1,16 +1,10 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
-import { Copy, Link, Hash } from "lucide-react";
-import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import BlockSelector from './purchase/BlockSelector';
 import ImageUploadStep from './purchase/ImageUploadStep';
 import LinkInputStep from './purchase/LinkInputStep';
-import ConfirmationStep from './purchase/ConfirmationStep';
+import PaymentStep from './purchase/PaymentStep';
 
 interface PurchaseModalProps {
   isOpen: boolean;
@@ -25,33 +19,14 @@ const WALLET_ADDRESS = "FGvFgGeudc8phyAbzxeixifeHKPonUczM2gSzHR7Hnqy";
 const BLOCK_PRICE = 0.1;
 
 const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) => {
-  const [currentStep, setCurrentStep] = useState<'initial' | 'select' | 'upload' | 'link' | 'confirm'>("initial");
+  const [currentStep, setCurrentStep] = useState<'initial' | 'select' | 'upload' | 'link' | 'payment'>("initial");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [link, setLink] = useState("");
-  const [transactionHash, setTransactionHash] = useState("");
   const [showPixelSelector, setShowPixelSelector] = useState(false);
   const [selectedBlocks, setSelectedBlocks] = useState<number[]>([]);
-  const { connected } = useWallet();
 
   const totalCost = selectedBlocks.length * BLOCK_PRICE;
-
-  const copyWalletAddress = async () => {
-    try {
-      await navigator.clipboard.writeText(WALLET_ADDRESS);
-      toast({
-        title: "Success!",
-        description: "Wallet address copied to clipboard",
-        className: "bg-gradient-to-r from-solana-purple to-solana-blue text-white font-pixel",
-      });
-    } catch (err) {
-      toast({
-        title: "Error",
-        description: "Failed to copy address. Please try manually.",
-        variant: "destructive",
-      });
-    }
-  };
 
   const handleChoosePixels = () => {
     setShowPixelSelector(true);
@@ -84,11 +59,10 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
 
   const handleLinkSubmit = (submittedLink: string) => {
     setLink(submittedLink);
-    setCurrentStep('confirm');
+    setCurrentStep('payment');
   };
 
   const handlePaymentSuccess = (txHash: string) => {
-    setTransactionHash(txHash);
     toast({
       title: "Purchase Complete!",
       description: "Your pixels have been successfully purchased",
@@ -115,28 +89,12 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
           {currentStep === 'initial' && (
             <div className="grid gap-6">
               <div className="flex flex-col gap-3 pt-2">
-                <div className="grid grid-cols-1 gap-3">
-                  {!connected ? (
-                    <WalletMultiButton className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8 w-full" />
-                  ) : (
-                    <>
-                      <Button
-                        onClick={handleChoosePixels}
-                        className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8"
-                      >
-                        Choose Pixels
-                      </Button>
-
-                      <Button
-                        onClick={copyWalletAddress}
-                        className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8"
-                      >
-                        <Copy className="w-3 h-3 mr-1" />
-                        Send SOL
-                      </Button>
-                    </>
-                  )}
-                </div>
+                <Button
+                  onClick={handleChoosePixels}
+                  className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8"
+                >
+                  Choose Pixels
+                </Button>
                 
                 <p className="text-center text-[8px] font-pixel text-white/70 mt-2">
                   Need help? Contact us via{" "}
@@ -164,13 +122,13 @@ const PurchaseModal = ({ isOpen, onClose, onSelectPixels }: PurchaseModalProps) 
           {currentStep === 'link' && (
             <LinkInputStep
               onLinkSubmit={handleLinkSubmit}
-              onNext={() => setCurrentStep('confirm')}
+              onNext={() => setCurrentStep('payment')}
               imagePreviewUrl={imagePreviewUrl}
             />
           )}
 
-          {currentStep === 'confirm' && (
-            <ConfirmationStep
+          {currentStep === 'payment' && (
+            <PaymentStep
               selectedBlocks={selectedBlocks}
               imagePreviewUrl={imagePreviewUrl}
               link={link}
