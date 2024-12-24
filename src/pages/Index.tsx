@@ -18,7 +18,7 @@ const Index = () => {
   const [isSelecting, setIsSelecting] = useState(false);
 
   const handleBuyPixelsClick = () => {
-    setIsSelecting(true);
+    setIsSelecting(prev => !prev);
   };
 
   return (
@@ -104,11 +104,10 @@ const Index = () => {
           <div id="grid" className="flex-1">
             <PixelGrid 
               onPixelSold={() => setTotalSold(prev => prev + 1)} 
-              onBuyPixelsClick={isSelecting}
+              onBuyPixelsClick={handleBuyPixelsClick}
             />
           </div>
 
-          {/* Slogan */}
           <div className="w-full max-w-[1000px] mx-auto mt-4 mb-2 py-2 px-4 bg-gradient-to-r from-[#1A1F2C] to-[#2D243F] rounded-lg border border-solana-purple/20">
             <p className="font-pixel text-[10px] text-center bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">
               Own a piece of Solana history - One pixel at a time!

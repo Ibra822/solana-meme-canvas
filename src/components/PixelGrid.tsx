@@ -99,17 +99,13 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
     setIsSelecting(false);
   };
 
-  const startSelection = () => {
-    setIsSelecting(true);
-    toast({
-      title: "Select a block",
-      description: "Click on a 10x10 block to purchase it",
-    });
-  };
-
   useEffect(() => {
     if (onBuyPixelsClick) {
-      startSelection();
+      setIsSelecting(true);
+      toast({
+        title: "Select a block",
+        description: "Click on a 10x10 block to purchase it",
+      });
     }
   }, [onBuyPixelsClick]);
 
@@ -167,7 +163,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
         pixelSize={BLOCK_SIZE}
         price={currentPrice}
         selectedPixelIndex={selectedPixelIndex}
-        onSelectPixels={startSelection}
+        onSelectPixels={() => setIsSelecting(true)}
       />
     </div>
   );

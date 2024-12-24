@@ -6,5 +6,5 @@ export interface PixelData {
 
 export interface PixelGridProps {
   onPixelSold: () => void;
-  onBuyPixelsClick?: () => void;
+  onBuyPixelsClick: () => void;
 }
