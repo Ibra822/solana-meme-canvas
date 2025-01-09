@@ -94,7 +94,8 @@ const Purchase = () => {
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              className="bg-[#2D243F]/50 border-solana-purple/20 text-[8px] font-pixel h-12"
+              className="bg-[#2D243F]/50 border-solana-purple/20 text-[8px] font-pixel h-12 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-solana-purple file:text-white hover:file:bg-solana-purple/90"
+              lang="en"
             />
             {imagePreview && (
               <img src={imagePreview} alt="Preview" className="mt-4 max-w-full h-auto rounded" />
@@ -129,7 +130,7 @@ const Purchase = () => {
           )}
 
           <div className="flex justify-center">
-            <WalletMultiButton className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[10px] h-12 px-8" />
+            <WalletMultiButton className="!bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 !text-white font-pixel !text-[10px] !h-12 !px-8 !rounded-lg !border-none" />
           </div>
 
           {connected && selectedPixels.length > 0 && (
