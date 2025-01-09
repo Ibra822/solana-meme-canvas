@@ -20,6 +20,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   const [scale, setScale] = useState(1);
   const [visibleChunks, setVisibleChunks] = useState<number[]>([]);
   const [hoveredPixel, setHoveredPixel] = useState<PixelData | null>(null);
+  const hoverTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     websocketService.connect();
@@ -36,6 +37,9 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
 
     return () => {
       unsubscribe();
+      if (hoverTimeoutRef.current) {
+        window.clearTimeout(hoverTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -93,8 +97,16 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   };
 
   const handlePixelHover = (index: number) => {
+    // Clear any existing timeout
+    if (hoverTimeoutRef.current) {
+      window.clearTimeout(hoverTimeoutRef.current);
+    }
+
+    // If mouse leaves pixel
     if (index === -1) {
-      setHoveredPixel(null);
+      hoverTimeoutRef.current = window.setTimeout(() => {
+        setHoveredPixel(null);
+      }, 100); // Small delay to prevent flickering
       return;
     }
 
@@ -106,8 +118,8 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
     if (pixelData) {
       const rect = gridRef.current?.getBoundingClientRect();
       if (rect) {
-        const x = (index % GRID_SIZE) + rect.left;
-        const y = Math.floor(index / GRID_SIZE) + rect.top;
+        const x = ((index % GRID_SIZE) * scale) + rect.left;
+        const y = (Math.floor(index / GRID_SIZE) * scale) + rect.top;
         setHoveredPixel({ ...pixelData, x, y });
       }
     } else {
@@ -126,7 +138,8 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
           margin: '0 auto',
           backgroundColor: '#fff',
           border: '1px solid rgba(153, 69, 255, 0.3)',
-          boxShadow: '0 0 20px rgba(153, 69, 255, 0.1)'
+          boxShadow: '0 0 20px rgba(153, 69, 255, 0.1)',
+          overflow: 'auto'
         }}
       >
         <div 
@@ -163,7 +176,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
 
       {hoveredPixel && (
         <div 
-          className="absolute bg-black/80 text-white p-2 rounded text-sm pointer-events-none"
+          className="absolute bg-black/80 text-white p-2 rounded text-sm pointer-events-none z-50"
           style={{
             left: `${hoveredPixel.x}px`,
             top: `${hoveredPixel.y - 30}px`
