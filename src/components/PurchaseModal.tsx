@@ -2,6 +2,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import SelectionGrid from './grid/SelectionGrid';
 import ImageUploadStep from './purchase/ImageUploadStep';
 import LinkInputStep from './purchase/LinkInputStep';
