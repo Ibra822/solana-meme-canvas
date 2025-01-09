@@ -16,6 +16,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   const [selectedPixelIndex, setSelectedPixelIndex] = useState<number | null>(null);
   const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [isSelecting, setIsSelecting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const gridRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const [visibleChunks, setVisibleChunks] = useState<number[]>([]);
@@ -24,7 +25,22 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   const lastHoverIndexRef = useRef<number>(-1);
 
   useEffect(() => {
-    websocketService.connect();
+    const initializeGrid = async () => {
+      try {
+        setIsLoading(true);
+        await websocketService.connect();
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Failed to initialize grid:', error);
+        toast({
+          title: "Connection Error",
+          description: "Failed to load the pixel grid. Please refresh the page.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    initializeGrid();
 
     const unsubscribe = websocketService.subscribe(message => {
       if (message.type === 'pixelUpdate') {
@@ -98,16 +114,13 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   };
 
   const handlePixelHover = (index: number) => {
-    // Prevent unnecessary updates if hovering over the same pixel
     if (lastHoverIndexRef.current === index) return;
     lastHoverIndexRef.current = index;
 
-    // Clear any existing timeout
     if (hoverTimeoutRef.current) {
       window.clearTimeout(hoverTimeoutRef.current);
     }
 
-    // If mouse leaves pixel
     if (index === -1) {
       hoverTimeoutRef.current = window.setTimeout(() => {
         setHoveredPixel(null);
@@ -120,21 +133,28 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
     const blockStartIndex = blockStartY * GRID_SIZE + blockStartX;
     
     const pixelData = takenPixels.get(blockStartIndex);
-    if (pixelData) {
-      const rect = gridRef.current?.getBoundingClientRect();
-      if (rect) {
-        const x = ((index % GRID_SIZE) * scale) + rect.left;
-        const y = (Math.floor(index / GRID_SIZE) * scale) + rect.top;
-        
-        // Debounce the hover state update
-        hoverTimeoutRef.current = window.setTimeout(() => {
-          setHoveredPixel({ ...pixelData, x, y });
-        }, 50);
-      }
+    if (pixelData && gridRef.current) {
+      const rect = gridRef.current.getBoundingClientRect();
+      const x = ((index % GRID_SIZE) * scale) + rect.left;
+      const y = (Math.floor(index / GRID_SIZE) * scale) + rect.top;
+      
+      hoverTimeoutRef.current = window.setTimeout(() => {
+        setHoveredPixel({ ...pixelData, x, y });
+      }, 50);
     } else {
       setHoveredPixel(null);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="animate-pulse text-solana-purple font-pixel text-sm">
+          Loading Pixel Grid...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full flex flex-col relative">

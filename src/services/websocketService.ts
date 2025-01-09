@@ -11,21 +11,53 @@ type WebSocketMessage = {
 class WebSocketService {
   private ws: WebSocket | null = null;
   private messageHandlers: ((message: WebSocketMessage) => void)[] = [];
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 5;
 
-  connect() {
-    this.ws = new WebSocket('wss://your-websocket-server.com');
+  async connect(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        this.ws = new WebSocket('wss://your-websocket-server.com');
 
-    this.ws.onmessage = (event) => {
-      const message: WebSocketMessage = JSON.parse(event.data);
-      if (message.type === 'pixelUpdate') {
-        this.messageHandlers.forEach(handler => handler(message));
+        this.ws.onopen = () => {
+          console.log('WebSocket connected successfully');
+          this.reconnectAttempts = 0;
+          resolve();
+        };
+
+        this.ws.onmessage = (event) => {
+          try {
+            const message: WebSocketMessage = JSON.parse(event.data);
+            if (message.type === 'pixelUpdate') {
+              this.messageHandlers.forEach(handler => handler(message));
+            }
+          } catch (error) {
+            console.error('Error processing WebSocket message:', error);
+          }
+        };
+
+        this.ws.onclose = () => {
+          console.log('WebSocket connection closed');
+          this.attemptReconnect();
+        };
+
+        this.ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+          reject(error);
+        };
+      } catch (error) {
+        console.error('Error creating WebSocket connection:', error);
+        reject(error);
       }
-    };
+    });
+  }
 
-    this.ws.onclose = () => {
-      // Attempt to reconnect after a delay
-      setTimeout(() => this.connect(), 5000);
-    };
+  private attemptReconnect() {
+    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+      this.reconnectAttempts++;
+      console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+      setTimeout(() => this.connect(), 5000 * this.reconnectAttempts);
+    }
   }
 
   subscribe(handler: (message: WebSocketMessage) => void) {
@@ -41,6 +73,8 @@ class WebSocketService {
         type: 'pixelUpdate',
         data: { index, pixelData }
       }));
+    } else {
+      console.warn('WebSocket is not connected. Pixel update queued.');
     }
   }
 }

@@ -4,8 +4,10 @@ import App from './App'
 import './index.css'
 import { Buffer } from 'buffer'
 
-// Polyfill Buffer for the browser environment
-window.Buffer = Buffer
+// Make Buffer available globally
+if (typeof window !== 'undefined') {
+  window.Buffer = Buffer;
+}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
