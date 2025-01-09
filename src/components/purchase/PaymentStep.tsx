@@ -56,7 +56,7 @@ const PaymentStep = ({
         websocketService.updatePixel(blockIndex, {
           imageUrl: imagePreviewUrl || '',
           link,
-          memecoinName: ''  // Add empty memecoinName as it's now required by PixelData
+          owner: publicKey.toString()
         });
       });
 

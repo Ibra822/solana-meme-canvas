@@ -2,8 +2,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import SelectionGrid from './grid/SelectionGrid';
 import ImageUploadStep from './purchase/ImageUploadStep';
 import LinkInputStep from './purchase/LinkInputStep';
@@ -32,7 +30,6 @@ const PurchaseModal = ({
   const [image, setImage] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [link, setLink] = useState("");
-  const [memecoinName, setMemecoinName] = useState("");
   const [selectedBlocks, setSelectedBlocks] = useState<number[]>([]);
 
   const totalCost = selectedBlocks.length * BLOCK_PRICE;
@@ -65,7 +62,6 @@ const PurchaseModal = ({
     setImage(null);
     setImagePreviewUrl(null);
     setLink("");
-    setMemecoinName("");
   };
 
   return (
@@ -76,7 +72,7 @@ const PurchaseModal = ({
             {currentStep === 'initial' ? 'Buy Pixel Block' : 
              currentStep === 'select' ? 'Select Blocks' :
              currentStep === 'upload' ? 'Upload Image' :
-             currentStep === 'link' ? 'Add Details' : 'Complete Payment'}
+             currentStep === 'link' ? 'Add Link' : 'Complete Payment'}
           </DialogTitle>
         </DialogHeader>
 
@@ -122,43 +118,11 @@ const PurchaseModal = ({
         )}
 
         {currentStep === 'link' && (
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label className="text-white/90 font-pixel text-[10px]">Memecoin Name</Label>
-              <Input
-                value={memecoinName}
-                onChange={(e) => setMemecoinName(e.target.value)}
-                placeholder="Enter your memecoin name"
-                className="bg-[#2D243F]/50 border-solana-purple/20 text-[8px] font-pixel h-10"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-white/90 font-pixel text-[10px]">Website Link</Label>
-              <Input
-                type="url"
-                value={link}
-                onChange={(e) => setLink(e.target.value)}
-                placeholder="https://"
-                className="bg-[#2D243F]/50 border-solana-purple/20 text-[8px] font-pixel h-10"
-              />
-            </div>
-            <Button
-              onClick={() => {
-                if (!memecoinName.trim()) {
-                  toast({
-                    title: "Missing Information",
-                    description: "Please enter your memecoin name",
-                    variant: "destructive",
-                  });
-                  return;
-                }
-                handleLinkSubmit(link);
-              }}
-              className="w-full bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-10"
-            >
-              Next
-            </Button>
-          </div>
+          <LinkInputStep
+            onLinkSubmit={handleLinkSubmit}
+            onNext={() => setCurrentStep('payment')}
+            imagePreviewUrl={imagePreviewUrl}
+          />
         )}
 
         {currentStep === 'payment' && (

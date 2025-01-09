@@ -1,7 +1,7 @@
 export interface PixelData {
   imageUrl?: string;
   link?: string;
-  memecoinName?: string;
+  owner?: string;
 }
 
 export interface PixelGridProps {
