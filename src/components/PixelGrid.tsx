@@ -93,13 +93,23 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   };
 
   const handlePixelHover = (index: number) => {
+    if (index === -1) {
+      setHoveredPixel(null);
+      return;
+    }
+
     const blockStartX = Math.floor((index % GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
     const blockStartY = Math.floor(Math.floor(index / GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
     const blockStartIndex = blockStartY * GRID_SIZE + blockStartX;
     
     const pixelData = takenPixels.get(blockStartIndex);
     if (pixelData) {
-      setHoveredPixel(pixelData);
+      const rect = gridRef.current?.getBoundingClientRect();
+      if (rect) {
+        const x = (index % GRID_SIZE) + rect.left;
+        const y = Math.floor(index / GRID_SIZE) + rect.top;
+        setHoveredPixel({ ...pixelData, x, y });
+      }
     } else {
       setHoveredPixel(null);
     }
@@ -152,12 +162,14 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
       </div>
 
       {hoveredPixel && (
-        <div className="absolute bg-black/80 text-white p-2 rounded text-sm pointer-events-none"
-             style={{
-               left: `${hoveredPixel.x}px`,
-               top: `${hoveredPixel.y - 30}px`
-             }}>
-          {hoveredPixel.memecoinName}
+        <div 
+          className="absolute bg-black/80 text-white p-2 rounded text-sm pointer-events-none"
+          style={{
+            left: `${hoveredPixel.x}px`,
+            top: `${hoveredPixel.y - 30}px`
+          }}
+        >
+          {hoveredPixel.memecoinName || 'Unnamed Project'}
         </div>
       )}
 
