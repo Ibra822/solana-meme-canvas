@@ -33,6 +33,7 @@
   * {
     @apply border-border;
   }
+  
   body {
     @apply bg-[#1A1F2C] text-foreground;
     font-family: 'Press Start 2P', cursive;
@@ -42,6 +43,9 @@
     height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -55,6 +59,7 @@
   position: relative;
   border: 2px solid rgba(153, 69, 255, 0.3);
   overflow: hidden;
+  will-change: transform;
 }
 
 .pixel {
@@ -69,6 +74,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  will-change: transform, background-color;
 }
 
 .pixel:hover {
@@ -108,12 +114,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 .animate-pulse {
@@ -130,21 +132,10 @@
   }
 }
 
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
 .btn-animated {
   background-size: 200% 200%;
   animation: gradient 3s ease infinite;
+  will-change: background-position;
 }
 
 /* Wallet Adapter Custom Styles */
