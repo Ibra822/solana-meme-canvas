@@ -169,7 +169,15 @@
 }
 
 .wallet-adapter-button {
-  @apply bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[10px] h-12 justify-center items-center px-6;
+  @apply bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[12px] h-14 justify-center items-center px-6 transition-all duration-300 ease-in-out;
+}
+
+.wallet-adapter-button-trigger {
+  @apply min-w-[200px];
+}
+
+.wallet-adapter-button img {
+  @apply w-6 h-6;
 }
 
 .wallet-adapter-modal-list-more {
@@ -182,4 +190,37 @@
 
 .wallet-adapter-dropdown-list-item {
   @apply text-white hover:bg-solana-purple/20 transition-colors;
+}
+
+/* Page Transition Animations */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Selection Grid Styles */
+.selection-grid-modal {
+  @apply fixed inset-0 bg-black/80 backdrop-blur-sm z-50;
+}
+
+.selection-grid-content {
+  @apply fixed inset-4 bg-[#1A1F2C] border border-solana-purple/20 rounded-lg overflow-hidden;
+  max-height: calc(100vh - 2rem);
 }

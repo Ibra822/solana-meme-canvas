@@ -84,7 +84,7 @@ const PurchaseModal = ({
             <div className="flex flex-col gap-4 pt-2">
               <Button
                 onClick={() => setCurrentStep('select')}
-                className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[10px] h-12 w-full"
+                className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[12px] h-14 w-full"
               >
                 Choose Blocks
               </Button>
