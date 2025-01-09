@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { toast } from '../components/ui/use-toast';
 import PurchaseModal from './PurchaseModal';
 import { calculatePixelPrice } from '../utils/pixelPricing';
@@ -17,15 +17,34 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [isSelecting, setIsSelecting] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
+  const [scale] = useState(1);
   const [visibleChunks, setVisibleChunks] = useState<number[]>([]);
 
+  const calculateVisibleChunks = useCallback(() => {
+    if (!gridRef.current) return;
+    const grid = gridRef.current;
+    const rect = grid.getBoundingClientRect();
+    const chunks: number[] = [];
+    
+    const startChunkX = Math.floor(grid.scrollLeft / CHUNK_SIZE);
+    const startChunkY = Math.floor(grid.scrollTop / CHUNK_SIZE);
+    const endChunkX = Math.ceil((grid.scrollLeft + rect.width) / CHUNK_SIZE);
+    const endChunkY = Math.ceil((grid.scrollTop + rect.height) / CHUNK_SIZE);
+
+    for (let y = startChunkY; y < endChunkY; y++) {
+      for (let x = startChunkX; x < endChunkX; x++) {
+        if (x < GRID_SIZE / CHUNK_SIZE && y < GRID_SIZE / CHUNK_SIZE) {
+          chunks.push(y * (GRID_SIZE / CHUNK_SIZE) + x);
+        }
+      }
+    }
+    setVisibleChunks(chunks);
+  }, []);
+
   useEffect(() => {
-    // Connect to WebSocket when component mounts
     websocketService.connect();
 
-    // Subscribe to pixel updates
-    const unsubscribe = websocketService.subscribe(message => {
+    const handlePixelUpdate = (message: any) => {
       if (message.type === 'pixelUpdate') {
         setTakenPixels(prev => {
           const newMap = new Map(prev);
@@ -33,35 +52,15 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
           return newMap;
         });
       }
-    });
+    };
 
+    const unsubscribe = websocketService.subscribe(handlePixelUpdate);
     return () => {
       unsubscribe();
     };
   }, []);
 
   useEffect(() => {
-    const calculateVisibleChunks = () => {
-      if (!gridRef.current) return;
-      const grid = gridRef.current;
-      const rect = grid.getBoundingClientRect();
-      const chunks: number[] = [];
-      
-      const startChunkX = Math.floor(grid.scrollLeft / CHUNK_SIZE);
-      const startChunkY = Math.floor(grid.scrollTop / CHUNK_SIZE);
-      const endChunkX = Math.ceil((grid.scrollLeft + rect.width) / CHUNK_SIZE);
-      const endChunkY = Math.ceil((grid.scrollTop + rect.height) / CHUNK_SIZE);
-
-      for (let y = startChunkY; y < endChunkY; y++) {
-        for (let x = startChunkX; x < endChunkX; x++) {
-          if (x < GRID_SIZE / CHUNK_SIZE && y < GRID_SIZE / CHUNK_SIZE) {
-            chunks.push(y * (GRID_SIZE / CHUNK_SIZE) + x);
-          }
-        }
-      }
-      setVisibleChunks(chunks);
-    };
-
     const handleScroll = () => {
       requestAnimationFrame(calculateVisibleChunks);
     };
@@ -77,9 +76,9 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
         gridElement.removeEventListener('scroll', handleScroll);
       }
     };
-  }, []);
+  }, [calculateVisibleChunks]);
 
-  const isBlockAvailable = (startIndex: number): boolean => {
+  const isBlockAvailable = useCallback((startIndex: number): boolean => {
     const startX = startIndex % GRID_SIZE;
     const startY = Math.floor(startIndex / GRID_SIZE);
 
@@ -90,9 +89,9 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
       }
     }
     return true;
-  };
+  }, [takenPixels]);
 
-  const handlePixelClick = (index: number) => {
+  const handlePixelClick = useCallback((index: number) => {
     if (!isSelecting) {
       const blockStartX = Math.floor((index % GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
       const blockStartY = Math.floor(Math.floor(index / GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
@@ -123,7 +122,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
     setSelectedPixelIndex(blockStartIndex);
     setIsModalOpen(true);
     setIsSelecting(false);
-  };
+  }, [isSelecting, takenPixels, isBlockAvailable]);
 
   useEffect(() => {
     if (onBuyPixelsClick) {
@@ -146,7 +145,8 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
           margin: '0 auto',
           backgroundColor: '#fff',
           border: '1px solid rgba(153, 69, 255, 0.3)',
-          boxShadow: '0 0 20px rgba(153, 69, 255, 0.1)'
+          boxShadow: '0 0 20px rgba(153, 69, 255, 0.1)',
+          overflow: 'auto'
         }}
       >
         <div 
@@ -155,28 +155,24 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
             width: `${GRID_SIZE}px`,
             height: `${GRID_SIZE}px`,
             transform: `scale(${scale})`,
-            transformOrigin: '0 0'
+            transformOrigin: '0 0',
+            willChange: 'transform'
           }}
         >
-          {visibleChunks.map(chunkIndex => {
-            const chunkStartX = (chunkIndex % (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
-            const chunkStartY = Math.floor(chunkIndex / (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
-            
-            return (
-              <GridChunk
-                key={chunkIndex}
-                chunkIndex={chunkIndex}
-                chunkStartX={chunkStartX}
-                chunkStartY={chunkStartY}
-                GRID_SIZE={GRID_SIZE}
-                CHUNK_SIZE={CHUNK_SIZE}
-                BLOCK_SIZE={BLOCK_SIZE}
-                takenPixels={takenPixels}
-                isSelecting={isSelecting}
-                handlePixelClick={handlePixelClick}
-              />
-            );
-          })}
+          {visibleChunks.map(chunkIndex => (
+            <GridChunk
+              key={chunkIndex}
+              chunkIndex={chunkIndex}
+              chunkStartX={(chunkIndex % (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE}
+              chunkStartY={Math.floor(chunkIndex / (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE}
+              GRID_SIZE={GRID_SIZE}
+              CHUNK_SIZE={CHUNK_SIZE}
+              BLOCK_SIZE={BLOCK_SIZE}
+              takenPixels={takenPixels}
+              isSelecting={isSelecting}
+              handlePixelClick={handlePixelClick}
+            />
+          ))}
         </div>
       </div>
 
