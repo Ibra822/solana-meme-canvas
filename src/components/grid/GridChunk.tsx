@@ -10,6 +10,8 @@ interface GridChunkProps {
   takenPixels: Map<number, PixelData>;
   isSelecting: boolean;
   handlePixelClick: (index: number) => void;
+  handlePixelHover: (index: number) => void;
+  hoveredPixel: number | null;
 }
 
 const GridChunk = ({
@@ -22,6 +24,8 @@ const GridChunk = ({
   takenPixels,
   isSelecting,
   handlePixelClick,
+  handlePixelHover,
+  hoveredPixel,
 }: GridChunkProps) => {
   const pixels = [];
 
@@ -34,21 +38,31 @@ const GridChunk = ({
       
       const pixelData = takenPixels.get(blockStartIndex);
       const isBlockStart = pixelIndex === blockStartIndex;
+      const isHovered = hoveredPixel === blockStartIndex;
       
       pixels.push(
         <div
           key={pixelIndex}
           className={`pixel ${takenPixels.has(blockStartIndex) ? 'taken' : ''} ${
             isBlockStart ? 'block-start' : ''
-          } ${isSelecting ? 'selecting' : ''}`}
+          } ${isSelecting ? 'selecting' : ''} ${isHovered ? 'hovered' : ''}`}
           onClick={() => handlePixelClick(pixelIndex)}
+          onMouseEnter={() => handlePixelHover(pixelIndex)}
+          onMouseLeave={() => handlePixelHover(-1)}
           style={{
             backgroundImage: pixelData?.imageUrl ? `url(${pixelData.imageUrl})` : 'none',
             backgroundSize: `${BLOCK_SIZE}px ${BLOCK_SIZE}px`,
             backgroundPosition: `${-(pixelIndex % BLOCK_SIZE)}px ${-(Math.floor((pixelIndex % (GRID_SIZE * BLOCK_SIZE)) / GRID_SIZE))}px`,
-            border: 'none'
+            border: 'none',
+            position: 'relative'
           }}
-        />
+        >
+          {isHovered && pixelData && (
+            <div className="absolute bottom-full left-0 z-50 bg-black/80 text-white px-2 py-1 rounded text-xs whitespace-nowrap">
+              {pixelData.memecoinName || 'Untitled Project'}
+            </div>
+          )}
+        </div>
       );
     }
   }
