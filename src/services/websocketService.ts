@@ -11,46 +11,21 @@ type WebSocketMessage = {
 class WebSocketService {
   private ws: WebSocket | null = null;
   private messageHandlers: ((message: WebSocketMessage) => void)[] = [];
-  private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
-  private mockData = new Map<number, PixelData>();
 
-  constructor() {
-    // Initialize some mock data for development
-    this.initializeMockData();
-  }
+  connect() {
+    this.ws = new WebSocket('wss://your-websocket-server.com');
 
-  private initializeMockData() {
-    // Add some sample pixel data
-    this.mockData.set(0, {
-      imageUrl: 'https://picsum.photos/10/10',
-      link: 'https://solana.com',
-      memecoinName: 'SolMeme'
-    });
-    
-    this.mockData.set(1100, {
-      imageUrl: 'https://picsum.photos/10/10',
-      link: 'https://solana.com',
-      memecoinName: 'MemeSOL'
-    });
-  }
+    this.ws.onmessage = (event) => {
+      const message: WebSocketMessage = JSON.parse(event.data);
+      if (message.type === 'pixelUpdate') {
+        this.messageHandlers.forEach(handler => handler(message));
+      }
+    };
 
-  async connect(): Promise<void> {
-    return new Promise((resolve) => {
-      // Simulate successful connection
-      setTimeout(() => {
-        console.log('Mock WebSocket connected successfully');
-        this.mockData.forEach((pixelData, index) => {
-          this.messageHandlers.forEach(handler => {
-            handler({
-              type: 'pixelUpdate',
-              data: { index, pixelData }
-            });
-          });
-        });
-        resolve();
-      }, 1000);
-    });
+    this.ws.onclose = () => {
+      // Attempt to reconnect after a delay
+      setTimeout(() => this.connect(), 5000);
+    };
   }
 
   subscribe(handler: (message: WebSocketMessage) => void) {
@@ -61,13 +36,12 @@ class WebSocketService {
   }
 
   updatePixel(index: number, pixelData: PixelData) {
-    this.mockData.set(index, pixelData);
-    this.messageHandlers.forEach(handler => {
-      handler({
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify({
         type: 'pixelUpdate',
         data: { index, pixelData }
-      });
-    });
+      }));
+    }
   }
 }
 

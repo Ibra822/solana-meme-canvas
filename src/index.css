@@ -33,7 +33,6 @@
   * {
     @apply border-border;
   }
-  
   body {
     @apply bg-[#1A1F2C] text-foreground;
     font-family: 'Press Start 2P', cursive;
@@ -43,9 +42,6 @@
     height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -59,7 +55,6 @@
   position: relative;
   border: 2px solid rgba(153, 69, 255, 0.3);
   overflow: hidden;
-  will-change: transform;
 }
 
 .pixel {
@@ -74,7 +69,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  will-change: transform, background-color;
 }
 
 .pixel:hover {
@@ -114,8 +108,12 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .animate-pulse {
@@ -132,10 +130,21 @@
   }
 }
 
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .btn-animated {
   background-size: 200% 200%;
   animation: gradient 3s ease infinite;
-  will-change: background-position;
 }
 
 /* Wallet Adapter Custom Styles */
@@ -160,7 +169,7 @@
 }
 
 .wallet-adapter-button {
-  @apply bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[10px] h-12 justify-center items-center rounded-lg transition-all duration-200 ease-in-out transform hover:scale-[1.02] active:scale-[0.98];
+  @apply bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8 justify-center items-center;
 }
 
 .wallet-adapter-modal-list-more {
@@ -173,34 +182,4 @@
 
 .wallet-adapter-dropdown-list-item {
   @apply text-white hover:bg-solana-purple/20 transition-colors;
-}
-
-/* File input styles */
-input[type="file"]::file-selector-button {
-  @apply bg-solana-purple text-white font-pixel text-[10px] px-4 py-2 rounded-lg border-none cursor-pointer transition-all duration-200 hover:bg-solana-purple/90;
-}
-
-input[type="file"] {
-  @apply text-white font-pixel text-[10px];
-}
-
-/* Optimize transitions */
-.page-transition {
-  @apply transition-opacity duration-300 ease-in-out;
-}
-
-.page-enter {
-  @apply opacity-0;
-}
-
-.page-enter-active {
-  @apply opacity-100;
-}
-
-.page-exit {
-  @apply opacity-100;
-}
-
-.page-exit-active {
-  @apply opacity-0;
 }
