@@ -161,15 +161,15 @@
 }
 
 .wallet-adapter-modal-title {
-  @apply text-[14px] bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent;
+  @apply text-[16px] bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent;
 }
 
 .wallet-adapter-modal-list {
-  @apply grid grid-cols-2 gap-2;
+  @apply grid grid-cols-2 gap-4;
 }
 
 .wallet-adapter-button {
-  @apply bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8 justify-center items-center;
+  @apply bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[10px] h-12 justify-center items-center px-6;
 }
 
 .wallet-adapter-modal-list-more {

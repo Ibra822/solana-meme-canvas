@@ -2,25 +2,35 @@ import { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Link } from "lucide-react";
+import { Link, Coins } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 
 interface LinkInputStepProps {
-  onLinkSubmit: (link: string) => void;
+  onLinkSubmit: (link: string, memecoinName: string) => void;
   onNext: () => void;
   imagePreviewUrl: string | null;
 }
 
 const LinkInputStep = ({ onLinkSubmit, onNext, imagePreviewUrl }: LinkInputStepProps) => {
   const [link, setLink] = useState('');
+  const [memecoinName, setMemecoinName] = useState('');
 
-  const validateAndSubmitLink = () => {
+  const validateAndSubmit = () => {
+    if (!memecoinName.trim()) {
+      toast({
+        title: "Missing Memecoin Name",
+        description: "Please enter your memecoin name",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const url = new URL(link);
       if (!url.protocol.startsWith('http')) {
         throw new Error('URL must start with http:// or https://');
       }
-      onLinkSubmit(link);
+      onLinkSubmit(link, memecoinName);
       onNext();
     } catch (error) {
       toast({
@@ -33,32 +43,54 @@ const LinkInputStep = ({ onLinkSubmit, onNext, imagePreviewUrl }: LinkInputStepP
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <Label htmlFor="link" className="text-white/90 font-pixel text-[8px] flex items-center gap-2">
-          <Link className="w-3 h-3" />
-          Enter Your Link
-        </Label>
-        <Input
-          id="link"
-          type="url"
-          value={link}
-          onChange={(e) => setLink(e.target.value)}
-          placeholder="https://your-website.com"
-          className="bg-[#2D243F]/50 border-solana-purple/20 text-[8px] font-pixel h-8"
-        />
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="memecoin" className="text-white/90 font-pixel text-[10px] flex items-center gap-2">
+            <Coins className="w-4 h-4" />
+            Memecoin Name
+          </Label>
+          <Input
+            id="memecoin"
+            type="text"
+            value={memecoinName}
+            onChange={(e) => setMemecoinName(e.target.value)}
+            placeholder="Enter your memecoin name"
+            className="bg-[#2D243F]/50 border-solana-purple/20 text-[10px] font-pixel h-12"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="link" className="text-white/90 font-pixel text-[10px] flex items-center gap-2">
+            <Link className="w-4 h-4" />
+            Website Link
+          </Label>
+          <Input
+            id="link"
+            type="url"
+            value={link}
+            onChange={(e) => setLink(e.target.value)}
+            placeholder="https://your-website.com"
+            className="bg-[#2D243F]/50 border-solana-purple/20 text-[10px] font-pixel h-12"
+          />
+        </div>
       </div>
 
       {imagePreviewUrl && (
-        <div className="mt-4">
-          <Label className="text-white/90 font-pixel text-[8px] mb-2">Preview:</Label>
-          <div className="border border-solana-purple/20 rounded-lg p-2">
+        <div className="mt-6">
+          <Label className="text-white/90 font-pixel text-[10px] mb-4">Preview:</Label>
+          <div className="border border-solana-purple/20 rounded-lg p-4">
             <img 
               src={imagePreviewUrl} 
               alt="Preview" 
-              className="max-w-full h-auto mb-2"
+              className="max-w-full h-auto mb-4"
             />
+            {memecoinName && (
+              <p className="text-[10px] font-pixel text-white/70 mb-2">
+                Memecoin: {memecoinName}
+              </p>
+            )}
             {link && (
-              <p className="text-[8px] font-pixel text-white/70 break-all">
+              <p className="text-[10px] font-pixel text-white/70 break-all">
                 Link: {link}
               </p>
             )}
@@ -66,11 +98,11 @@ const LinkInputStep = ({ onLinkSubmit, onNext, imagePreviewUrl }: LinkInputStepP
         </div>
       )}
 
-      <div className="flex justify-end mt-4">
+      <div className="flex justify-end mt-6">
         <Button
-          onClick={validateAndSubmitLink}
-          disabled={!link}
-          className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px]"
+          onClick={validateAndSubmit}
+          disabled={!link || !memecoinName}
+          className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[10px] h-12 px-8"
         >
           Next
         </Button>
