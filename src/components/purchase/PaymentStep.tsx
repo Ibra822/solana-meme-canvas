@@ -10,6 +10,7 @@ interface PaymentStepProps {
   selectedBlocks: number[];
   imagePreviewUrl: string | null;
   link: string;
+  memecoinName: string;
   totalCost: number;
   onSuccess: (txHash: string) => void;
   recipientAddress: string;
@@ -19,6 +20,7 @@ const PaymentStep = ({
   selectedBlocks,
   imagePreviewUrl,
   link,
+  memecoinName,
   totalCost,
   onSuccess,
   recipientAddress
@@ -56,7 +58,7 @@ const PaymentStep = ({
         websocketService.updatePixel(blockIndex, {
           imageUrl: imagePreviewUrl || '',
           link,
-          owner: publicKey.toString()
+          memecoinName
         });
       });
 
@@ -102,6 +104,11 @@ const PaymentStep = ({
         <div>
           <Label className="text-white/90 font-pixel text-[8px]">Link</Label>
           <p className="text-white/70 font-pixel text-[8px] break-all">{link}</p>
+        </div>
+
+        <div>
+          <Label className="text-white/90 font-pixel text-[8px]">Memecoin Name</Label>
+          <p className="text-white/70 font-pixel text-[8px] break-all">{memecoinName}</p>
         </div>
 
         <div>
