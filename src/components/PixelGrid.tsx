@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { toast } from '../components/ui/use-toast';
 import PurchaseModal from './PurchaseModal';
-import { calculatePixelPrice } from '../utils/pixelPricing';
 import GridChunk from './grid/GridChunk';
 import { PixelData, PixelGridProps } from './grid/types';
 import { websocketService } from '../services/websocketService';
@@ -14,7 +13,6 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   const [takenPixels, setTakenPixels] = useState<Map<number, PixelData>>(new Map());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPixelIndex, setSelectedPixelIndex] = useState<number | null>(null);
-  const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [isSelecting, setIsSelecting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -138,9 +136,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
       const x = ((index % GRID_SIZE) * scale) + rect.left;
       const y = (Math.floor(index / GRID_SIZE) * scale) + rect.top;
       
-      hoverTimeoutRef.current = window.setTimeout(() => {
-        setHoveredPixel({ ...pixelData, x, y });
-      }, 50);
+      setHoveredPixel({ ...pixelData, x, y });
     } else {
       setHoveredPixel(null);
     }
@@ -225,7 +221,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
           setIsSelecting(false);
         }}
         pixelSize={BLOCK_SIZE}
-        price={currentPrice}
+        price={0}
         selectedPixelIndex={selectedPixelIndex}
         onSelectPixels={() => setIsSelecting(true)}
         takenPixels={takenPixels}

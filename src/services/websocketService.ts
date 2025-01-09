@@ -13,51 +13,44 @@ class WebSocketService {
   private messageHandlers: ((message: WebSocketMessage) => void)[] = [];
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
+  private mockData = new Map<number, PixelData>();
 
-  async connect(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        this.ws = new WebSocket('wss://your-websocket-server.com');
+  constructor() {
+    // Initialize some mock data for development
+    this.initializeMockData();
+  }
 
-        this.ws.onopen = () => {
-          console.log('WebSocket connected successfully');
-          this.reconnectAttempts = 0;
-          resolve();
-        };
-
-        this.ws.onmessage = (event) => {
-          try {
-            const message: WebSocketMessage = JSON.parse(event.data);
-            if (message.type === 'pixelUpdate') {
-              this.messageHandlers.forEach(handler => handler(message));
-            }
-          } catch (error) {
-            console.error('Error processing WebSocket message:', error);
-          }
-        };
-
-        this.ws.onclose = () => {
-          console.log('WebSocket connection closed');
-          this.attemptReconnect();
-        };
-
-        this.ws.onerror = (error) => {
-          console.error('WebSocket error:', error);
-          reject(error);
-        };
-      } catch (error) {
-        console.error('Error creating WebSocket connection:', error);
-        reject(error);
-      }
+  private initializeMockData() {
+    // Add some sample pixel data
+    this.mockData.set(0, {
+      imageUrl: 'https://picsum.photos/10/10',
+      link: 'https://solana.com',
+      memecoinName: 'SolMeme'
+    });
+    
+    this.mockData.set(1100, {
+      imageUrl: 'https://picsum.photos/10/10',
+      link: 'https://solana.com',
+      memecoinName: 'MemeSOL'
     });
   }
 
-  private attemptReconnect() {
-    if (this.reconnectAttempts < this.maxReconnectAttempts) {
-      this.reconnectAttempts++;
-      console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
-      setTimeout(() => this.connect(), 5000 * this.reconnectAttempts);
-    }
+  async connect(): Promise<void> {
+    return new Promise((resolve) => {
+      // Simulate successful connection
+      setTimeout(() => {
+        console.log('Mock WebSocket connected successfully');
+        this.mockData.forEach((pixelData, index) => {
+          this.messageHandlers.forEach(handler => {
+            handler({
+              type: 'pixelUpdate',
+              data: { index, pixelData }
+            });
+          });
+        });
+        resolve();
+      }, 1000);
+    });
   }
 
   subscribe(handler: (message: WebSocketMessage) => void) {
@@ -68,14 +61,13 @@ class WebSocketService {
   }
 
   updatePixel(index: number, pixelData: PixelData) {
-    if (this.ws?.readyState === WebSocket.OPEN) {
-      this.ws.send(JSON.stringify({
+    this.mockData.set(index, pixelData);
+    this.messageHandlers.forEach(handler => {
+      handler({
         type: 'pixelUpdate',
         data: { index, pixelData }
-      }));
-    } else {
-      console.warn('WebSocket is not connected. Pixel update queued.');
-    }
+      });
+    });
   }
 }
 
