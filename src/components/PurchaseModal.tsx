@@ -6,7 +6,7 @@ import SelectionGrid from './grid/SelectionGrid';
 import ImageUploadStep from './purchase/ImageUploadStep';
 import LinkInputStep from './purchase/LinkInputStep';
 import PaymentStep from './purchase/PaymentStep';
-import { PixelData } from './types';
+import { PixelData } from './grid/types';
 
 interface PurchaseModalProps {
   isOpen: boolean;
@@ -30,7 +30,6 @@ const PurchaseModal = ({
   const [image, setImage] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [link, setLink] = useState("");
-  const [memecoinName, setMemecoinName] = useState("");
   const [selectedBlocks, setSelectedBlocks] = useState<number[]>([]);
 
   const totalCost = selectedBlocks.length * BLOCK_PRICE;
@@ -46,9 +45,8 @@ const PurchaseModal = ({
     setCurrentStep('link');
   };
 
-  const handleLinkSubmit = (submittedLink: string, submittedMemecoinName: string) => {
+  const handleLinkSubmit = (submittedLink: string) => {
     setLink(submittedLink);
-    setMemecoinName(submittedMemecoinName);
     setCurrentStep('payment');
   };
 
@@ -64,32 +62,31 @@ const PurchaseModal = ({
     setImage(null);
     setImagePreviewUrl(null);
     setLink("");
-    setMemecoinName("");
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[800px] bg-[#1A1F2C] text-white border border-solana-purple/20 p-8 w-11/12">
+      <DialogContent className="sm:max-w-[800px] bg-[#1A1F2C] text-white border border-solana-purple/20 p-8">
         <DialogHeader className="mb-6">
-          <DialogTitle className="text-[16px] font-pixel text-center bg-gradient-to-r from-solana-purple to-solana-blue bg-clip-text text-transparent">
+          <DialogTitle className="text-[14px] font-pixel text-center bg-gradient-to-r from-solana-purple to-solana-blue bg-clip-text text-transparent">
             {currentStep === 'initial' ? 'Buy Pixel Block' : 
              currentStep === 'select' ? 'Select Blocks' :
              currentStep === 'upload' ? 'Upload Image' :
-             currentStep === 'link' ? 'Add Details' : 'Complete Payment'}
+             currentStep === 'link' ? 'Add Link' : 'Complete Payment'}
           </DialogTitle>
         </DialogHeader>
 
         {currentStep === 'initial' && (
           <div className="grid gap-6">
-            <div className="flex flex-col gap-4 pt-2">
+            <div className="flex flex-col gap-3 pt-2">
               <Button
                 onClick={() => setCurrentStep('select')}
-                className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[12px] h-14 w-full"
+                className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8"
               >
                 Choose Blocks
               </Button>
               
-              <p className="text-center text-[12px] font-pixel text-white/70 mt-2">
+              <p className="text-center text-[8px] font-pixel text-white/70 mt-2">
                 Need help? Contact us via{" "}
                 <a 
                   href="https://t.me/secelev" 
@@ -133,7 +130,6 @@ const PurchaseModal = ({
             selectedBlocks={selectedBlocks}
             imagePreviewUrl={imagePreviewUrl}
             link={link}
-            memecoinName={memecoinName}
             totalCost={totalCost}
             onSuccess={handlePaymentSuccess}
             recipientAddress={WALLET_ADDRESS}

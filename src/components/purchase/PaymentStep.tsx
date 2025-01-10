@@ -10,7 +10,6 @@ interface PaymentStepProps {
   selectedBlocks: number[];
   imagePreviewUrl: string | null;
   link: string;
-  memecoinName: string;
   totalCost: number;
   onSuccess: (txHash: string) => void;
   recipientAddress: string;
@@ -20,7 +19,6 @@ const PaymentStep = ({
   selectedBlocks,
   imagePreviewUrl,
   link,
-  memecoinName,
   totalCost,
   onSuccess,
   recipientAddress
@@ -58,7 +56,7 @@ const PaymentStep = ({
         websocketService.updatePixel(blockIndex, {
           imageUrl: imagePreviewUrl || '',
           link,
-          memecoinName
+          owner: publicKey.toString()
         });
       });
 
@@ -82,15 +80,15 @@ const PaymentStep = ({
     <div className="space-y-6">
       <div className="space-y-4">
         <div>
-          <Label className="text-white/90 font-pixel text-[12px]">Selected Blocks</Label>
-          <p className="text-white/70 font-pixel text-[12px]">
+          <Label className="text-white/90 font-pixel text-[8px]">Selected Blocks</Label>
+          <p className="text-white/70 font-pixel text-[8px]">
             {selectedBlocks.length} blocks selected ({selectedBlocks.length * 100} pixels)
           </p>
         </div>
 
         {imagePreviewUrl && (
           <div>
-            <Label className="text-white/90 font-pixel text-[12px]">Image Preview</Label>
+            <Label className="text-white/90 font-pixel text-[8px]">Image Preview</Label>
             <div className="border border-solana-purple/20 rounded-lg p-2 mt-1">
               <img 
                 src={imagePreviewUrl} 
@@ -102,17 +100,12 @@ const PaymentStep = ({
         )}
 
         <div>
-          <Label className="text-white/90 font-pixel text-[12px]">Link</Label>
-          <p className="text-white/70 font-pixel text-[12px] break-all">{link}</p>
+          <Label className="text-white/90 font-pixel text-[8px]">Link</Label>
+          <p className="text-white/70 font-pixel text-[8px] break-all">{link}</p>
         </div>
 
         <div>
-          <Label className="text-white/90 font-pixel text-[12px]">Memecoin Name</Label>
-          <p className="text-white/70 font-pixel text-[12px] break-all">{memecoinName}</p>
-        </div>
-
-        <div>
-          <Label className="text-white/90 font-pixel text-[12px]">Total Cost</Label>
+          <Label className="text-white/90 font-pixel text-[8px]">Total Cost</Label>
           <p className="text-white font-pixel text-[12px] bg-gradient-to-r from-solana-purple to-solana-blue bg-clip-text text-transparent">
             {totalCost} SOL
           </p>
@@ -121,11 +114,11 @@ const PaymentStep = ({
 
       <div className="flex justify-end gap-2">
         {!connected ? (
-          <WalletMultiButton className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[12px] h-14" />
+          <WalletMultiButton className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8" />
         ) : (
           <Button
             onClick={handlePayment}
-            className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[12px] h-14"
+            className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px]"
           >
             Confirm & Pay
           </Button>

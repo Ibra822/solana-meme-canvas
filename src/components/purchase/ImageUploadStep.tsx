@@ -51,24 +51,24 @@ const ImageUploadStep = ({ onImageSelect, onNext, selectedBlocksCount }: ImageUp
 
   return (
     <div className="space-y-6">
-      <div className="space-y-4">
-        <Label htmlFor="image" className="text-white/90 font-pixel text-[12px] flex items-center gap-2">
-          <Upload className="w-4 h-4" />
-          Upload Your Meme Image
+      <div className="space-y-2">
+        <Label htmlFor="image" className="text-white/90 font-pixel text-[8px] flex items-center gap-2">
+          <Upload className="w-3 h-3" />
+          Upload Your Image
         </Label>
         <Input
           id="image"
           type="file"
           accept="image/png,image/jpeg"
           onChange={(e) => e.target.files?.[0] && validateAndSetImage(e.target.files[0])}
-          className="bg-[#2D243F]/50 border-solana-purple/20 text-[12px] font-pixel cursor-pointer file:cursor-pointer file:border-0 file:bg-solana-purple/20 file:text-white/90 file:font-pixel hover:file:bg-solana-purple/30 transition-colors h-14"
+          className="bg-[#2D243F]/50 border-solana-purple/20 text-[8px] font-pixel cursor-pointer file:cursor-pointer file:border-0 file:bg-solana-purple/20 file:text-white/90 file:font-pixel hover:file:bg-solana-purple/30 transition-colors h-8"
         />
       </div>
 
       {previewUrl && (
-        <div className="mt-6">
-          <Label className="text-white/90 font-pixel text-[12px] mb-4">Preview:</Label>
-          <div className="border border-solana-purple/20 rounded-lg p-4">
+        <div className="mt-4">
+          <Label className="text-white/90 font-pixel text-[8px] mb-2">Preview:</Label>
+          <div className="border border-solana-purple/20 rounded-lg p-2">
             <img 
               src={previewUrl} 
               alt="Preview" 
@@ -78,11 +78,11 @@ const ImageUploadStep = ({ onImageSelect, onNext, selectedBlocksCount }: ImageUp
         </div>
       )}
 
-      <div className="flex justify-end mt-6">
+      <div className="flex justify-end mt-4">
         <Button
           onClick={onNext}
           disabled={!previewUrl}
-          className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[12px] h-14 px-8"
+          className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px]"
         >
           Next
         </Button>
