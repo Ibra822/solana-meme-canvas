@@ -10,6 +10,7 @@ interface GridChunkProps {
   takenPixels: Map<number, PixelData>;
   isSelecting: boolean;
   handlePixelClick: (index: number) => void;
+  handlePixelHover: (index: number) => void;
 }
 
 const GridChunk = ({
@@ -22,6 +23,7 @@ const GridChunk = ({
   takenPixels,
   isSelecting,
   handlePixelClick,
+  handlePixelHover,
 }: GridChunkProps) => {
   const pixels = [];
 
@@ -42,6 +44,7 @@ const GridChunk = ({
             isBlockStart ? 'block-start' : ''
           } ${isSelecting ? 'selecting' : ''}`}
           onClick={() => handlePixelClick(pixelIndex)}
+          onMouseEnter={() => handlePixelHover(pixelIndex)}
           style={{
             backgroundImage: pixelData?.imageUrl ? `url(${pixelData.imageUrl})` : 'none',
             backgroundSize: `${BLOCK_SIZE}px ${BLOCK_SIZE}px`,
