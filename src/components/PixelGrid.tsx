@@ -22,41 +22,26 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   const [visibleChunks, setVisibleChunks] = useState<number[]>([]);
   const [hoveredPixel, setHoveredPixel] = useState<PixelData | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting');
-  const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    try {
-      wsRef.current = websocketService.connect();
-      setConnectionStatus('connected');
+    const ws = websocketService.connect();
+    setConnectionStatus('connected');
 
-      const unsubscribe = websocketService.subscribe(message => {
-        if (message.type === 'pixelUpdate') {
-          setTakenPixels(prev => {
-            const newMap = new Map(prev);
-            newMap.set(message.data.index, message.data.pixelData);
-            return newMap;
-          });
-        }
-      });
+    const unsubscribe = websocketService.subscribe(message => {
+      if (message.type === 'pixelUpdate') {
+        setTakenPixels(prev => {
+          const newMap = new Map(prev);
+          newMap.set(message.data.index, message.data.pixelData);
+          return newMap;
+        });
+      }
+    });
 
-      return () => {
-        unsubscribe();
-        if (wsRef.current) {
-          wsRef.current.close();
-        }
-      };
-    } catch (error) {
-      console.error('Failed to establish WebSocket connection:', error);
-      setConnectionStatus('disconnected');
-      toast({
-        title: "Connection Error",
-        description: "Unable to establish real-time connection. Some features may be limited.",
-        variant: "destructive"
-      });
-    }
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
-  // Optimize visible chunks calculation with debounce
   useEffect(() => {
     let timeoutId: number;
     
@@ -128,7 +113,6 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
     setHoveredPixel(pixelData || null);
   };
 
-  // Memoize grid chunks to prevent unnecessary rerenders
   const gridChunks = useMemo(() => {
     return visibleChunks.map(chunkIndex => {
       const chunkStartX = (chunkIndex % (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
