@@ -96,7 +96,7 @@ const PurchaseModal = ({
               
               <Button
                 onClick={() => setCurrentStep('select')}
-                className="w-full bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8"
+                className="w-full bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-10"
               >
                 Choose Blocks
               </Button>
@@ -117,7 +117,7 @@ const PurchaseModal = ({
         )}
 
         {currentStep === 'select' && (
-          <div className="flex flex-col h-full">
+          <div className="flex flex-col h-full bg-[#1A1F2C] rounded-lg p-4">
             <SelectionGrid
               takenPixels={takenPixels}
               onSelectionConfirm={handleSelectionConfirm}
