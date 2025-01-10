@@ -7,11 +7,10 @@ class WebSocketService {
   private static instance: WebSocketService;
   private ws: WebSocket | null = null;
   private messageHandlers: ((message: WebSocketMessage) => void)[] = [];
-  private mockMode: boolean = true; // Development mode flag
-  private mockData: Map<number, any> = new Map(); // Store mock data
+  private mockMode: boolean = true;
+  private mockData: Map<number, any> = new Map();
 
   private constructor() {
-    // Initialize mock data if needed
     if (this.mockMode) {
       console.log('WebSocket Service running in mock mode');
     }
@@ -26,7 +25,6 @@ class WebSocketService {
 
   connect(): WebSocket {
     if (this.mockMode) {
-      // Create a mock WebSocket for development
       const mockWs = {
         send: (data: string) => {
           console.log('Mock WebSocket send:', data);
@@ -53,7 +51,6 @@ class WebSocketService {
         dispatchEvent: () => true,
       } as WebSocket;
 
-      // Simulate successful connection
       setTimeout(() => {
         if (mockWs.onopen) {
           mockWs.onopen(new Event('open'));
@@ -64,7 +61,6 @@ class WebSocketService {
       return mockWs;
     }
 
-    // Real WebSocket connection (for production)
     try {
       const wsUrl = import.meta.env.VITE_WEBSOCKET_URL || 'wss://your-production-websocket-server.com';
       this.ws = new WebSocket(wsUrl);
@@ -97,8 +93,7 @@ class WebSocketService {
     };
   }
 
-  // Mock methods for development
-  updateMockData(index: number, data: any) {
+  updatePixel(index: number, data: any) {
     if (this.mockMode) {
       this.mockData.set(index, data);
       this.messageHandlers.forEach((handler) => 
@@ -107,6 +102,16 @@ class WebSocketService {
           data: { index, pixelData: data }
         })
       );
+      return;
+    }
+
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify({
+        type: 'pixelUpdate',
+        data: { index, pixelData: data }
+      }));
+    } else {
+      console.error('WebSocket is not connected');
     }
   }
 
