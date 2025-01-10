@@ -6,7 +6,7 @@ import SelectionGrid from './grid/SelectionGrid';
 import ImageUploadStep from './purchase/ImageUploadStep';
 import LinkInputStep from './purchase/LinkInputStep';
 import PaymentStep from './purchase/PaymentStep';
-import { PixelData } from './grid/types';
+import { PixelData } from './types';
 
 interface PurchaseModalProps {
   isOpen: boolean;
@@ -89,7 +89,7 @@ const PurchaseModal = ({
                 Choose Blocks
               </Button>
               
-              <p className="text-center text-[10px] font-pixel text-white/70 mt-2">
+              <p className="text-center text-[12px] font-pixel text-white/70 mt-2">
                 Need help? Contact us via{" "}
                 <a 
                   href="https://t.me/secelev" 
