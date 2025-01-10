@@ -2,11 +2,12 @@ export interface PixelData {
   imageUrl?: string;
   link?: string;
   memecoinName?: string;
+  owner?: string;
 }
 
 export interface PixelGridProps {
   onPixelSold: () => void;
-  onBuyPixelsClick?: boolean;
+  onBuyPixelsClick: () => void;
 }
 
 export interface GridChunkProps {

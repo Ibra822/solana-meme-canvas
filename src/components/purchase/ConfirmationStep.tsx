@@ -57,7 +57,7 @@ const ConfirmationStep = ({
         websocketService.updatePixel(blockIndex, {
           imageUrl: imagePreviewUrl || '',
           link,
-          owner: publicKey.toString()
+          memecoinName: publicKey.toString()
         });
       });
 
