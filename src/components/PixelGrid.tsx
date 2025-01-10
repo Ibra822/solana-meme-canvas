@@ -19,11 +19,12 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const [visibleChunks, setVisibleChunks] = useState<number[]>([]);
-  const [hoveredPixel, setHoveredPixel] = useState<PixelData | null>(null);
 
   useEffect(() => {
+    // Connect to WebSocket when component mounts
     websocketService.connect();
 
+    // Subscribe to pixel updates
     const unsubscribe = websocketService.subscribe(message => {
       if (message.type === 'pixelUpdate') {
         setTakenPixels(prev => {
@@ -78,6 +79,19 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
     };
   }, []);
 
+  const isBlockAvailable = (startIndex: number): boolean => {
+    const startX = startIndex % GRID_SIZE;
+    const startY = Math.floor(startIndex / GRID_SIZE);
+
+    for (let y = 0; y < BLOCK_SIZE; y++) {
+      for (let x = 0; x < BLOCK_SIZE; x++) {
+        const pixelIndex = (startY + y) * GRID_SIZE + (startX + x);
+        if (takenPixels.has(pixelIndex)) return false;
+      }
+    }
+    return true;
+  };
+
   const handlePixelClick = (index: number) => {
     if (!isSelecting) {
       const blockStartX = Math.floor((index % GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
@@ -90,23 +104,39 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
         return;
       }
     }
-  };
 
-  const handlePixelHover = (index: number) => {
     const blockStartX = Math.floor((index % GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
     const blockStartY = Math.floor(Math.floor(index / GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
     const blockStartIndex = blockStartY * GRID_SIZE + blockStartX;
-    
-    const pixelData = takenPixels.get(blockStartIndex);
-    if (pixelData) {
-      setHoveredPixel(pixelData);
-    } else {
-      setHoveredPixel(null);
+
+    if (!isBlockAvailable(blockStartIndex)) {
+      toast({
+        title: "Block already taken",
+        description: "This block has already been purchased.",
+        variant: "destructive",
+      });
+      return;
     }
+
+    const price = calculatePixelPrice(blockStartIndex, { width: GRID_SIZE, height: GRID_SIZE });
+    setCurrentPrice(price);
+    setSelectedPixelIndex(blockStartIndex);
+    setIsModalOpen(true);
+    setIsSelecting(false);
   };
 
+  useEffect(() => {
+    if (onBuyPixelsClick) {
+      setIsSelecting(true);
+      toast({
+        title: "Select a block",
+        description: "Click on a 10x10 block to purchase it",
+      });
+    }
+  }, [onBuyPixelsClick]);
+
   return (
-    <div className="w-full h-full flex flex-col relative">
+    <div className="w-full h-full flex flex-col">
       <div 
         ref={gridRef}
         className="pixel-grid relative w-full aspect-square"
@@ -144,22 +174,11 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
                 takenPixels={takenPixels}
                 isSelecting={isSelecting}
                 handlePixelClick={handlePixelClick}
-                handlePixelHover={handlePixelHover}
               />
             );
           })}
         </div>
       </div>
-
-      {hoveredPixel && (
-        <div className="absolute bg-black/80 text-white p-2 rounded text-sm pointer-events-none"
-             style={{
-               left: `${hoveredPixel.x}px`,
-               top: `${hoveredPixel.y - 30}px`
-             }}>
-          {hoveredPixel.memecoinName}
-        </div>
-      )}
 
       <PurchaseModal
         isOpen={isModalOpen}

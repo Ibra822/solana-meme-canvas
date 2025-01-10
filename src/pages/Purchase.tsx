@@ -17,7 +17,6 @@ const Purchase = () => {
   const navigate = useNavigate();
   const [image, setImage] = useState<File | null>(null);
   const [link, setLink] = useState('');
-  const [memecoinName, setMemecoinName] = useState('');
   const [selectedPixels, setSelectedPixels] = useState<number[]>([]);
   const [isGridOpen, setIsGridOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -41,7 +40,7 @@ const Purchase = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!image || !link || !memecoinName || selectedPixels.length === 0) {
+    if (!image || !link || selectedPixels.length === 0) {
       toast({
         title: "Missing Information",
         description: "Please fill out all fields and select pixels",
@@ -71,57 +70,46 @@ const Purchase = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#1A1F2C] to-[#2D243F] p-4">
-      <div className="max-w-xl mx-auto bg-[#1A1F2C]/50 rounded-lg p-8 border border-solana-purple/20">
-        <h1 className="text-2xl font-pixel text-center bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent mb-8">
+      <div className="max-w-md mx-auto bg-[#1A1F2C]/50 rounded-lg p-6 border border-solana-purple/20">
+        <h1 className="text-2xl font-pixel text-center bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent mb-6">
           Purchase Pixels
         </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="space-y-4">
-            <Label className="text-white/90 font-pixel text-[10px]">Memecoin Name</Label>
-            <Input
-              type="text"
-              value={memecoinName}
-              onChange={(e) => setMemecoinName(e.target.value)}
-              placeholder="Enter your memecoin name"
-              className="bg-[#2D243F]/50 border-solana-purple/20 text-[8px] font-pixel h-12"
-            />
-          </div>
-
-          <div className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
             <Label className="text-white/90 font-pixel text-[10px]">Upload Image</Label>
             <Input
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              className="bg-[#2D243F]/50 border-solana-purple/20 text-[8px] font-pixel h-12"
+              className="bg-[#2D243F]/50 border-solana-purple/20 text-[8px] font-pixel"
             />
             {imagePreview && (
-              <img src={imagePreview} alt="Preview" className="mt-4 max-w-full h-auto rounded" />
+              <img src={imagePreview} alt="Preview" className="mt-2 max-w-full h-auto rounded" />
             )}
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-2">
             <Label className="text-white/90 font-pixel text-[10px]">Website Link</Label>
             <Input
               type="url"
               value={link}
               onChange={(e) => setLink(e.target.value)}
               placeholder="https://"
-              className="bg-[#2D243F]/50 border-solana-purple/20 text-[8px] font-pixel h-12"
+              className="bg-[#2D243F]/50 border-solana-purple/20 text-[8px] font-pixel"
             />
           </div>
 
           <Button
             type="button"
             onClick={() => setIsGridOpen(true)}
-            className="w-full h-12 bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[10px]"
+            className="w-full bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[10px]"
           >
             Select Pixels
           </Button>
 
           {selectedPixels.length > 0 && (
-            <div className="text-white/90 font-pixel text-[10px] text-center p-4 bg-[#2D243F]/30 rounded-lg">
+            <div className="text-white/90 font-pixel text-[10px] text-center">
               Selected Pixels: {selectedPixels.length}
               <br />
               Total: {totalCost} SOL
@@ -129,13 +117,13 @@ const Purchase = () => {
           )}
 
           <div className="flex justify-center">
-            <WalletMultiButton className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[10px] h-12 px-8" />
+            <WalletMultiButton className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8" />
           </div>
 
           {connected && selectedPixels.length > 0 && (
             <Button
               type="submit"
-              className="w-full h-12 bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[10px]"
+              className="w-full bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[10px]"
             >
               Complete Purchase
             </Button>
@@ -144,7 +132,7 @@ const Purchase = () => {
       </div>
 
       <Dialog open={isGridOpen} onOpenChange={setIsGridOpen}>
-        <DialogContent className="bg-[#1A1F2C] border border-solana-purple/20 max-w-4xl w-[90vw]">
+        <DialogContent className="bg-[#1A1F2C] border border-solana-purple/20">
           <SelectionGrid
             takenPixels={takenPixels}
             onSelectionConfirm={handlePixelSelection}

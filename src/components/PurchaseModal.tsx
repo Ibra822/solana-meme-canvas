@@ -135,14 +135,6 @@ const PurchaseModal = ({
             recipientAddress={WALLET_ADDRESS}
           />
         )}
-
-        {(currentStep === 'upload' || currentStep === 'link' || currentStep === 'payment') && (
-          <div className="mt-4 pt-4 border-t border-solana-purple/20">
-            <p className="text-right font-pixel text-[10px] text-white/90">
-              Total: <span className="text-solana-purple">{totalCost.toFixed(1)} SOL</span>
-            </p>
-          </div>
-        )}
       </DialogContent>
     </Dialog>
   );
