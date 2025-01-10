@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Stats from '../components/Stats';
 import PixelGrid from '../components/PixelGrid';
@@ -12,6 +12,19 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+// Memoize static components
+const Header = memo(() => (
+  <h1 className="text-[14px] md:text-[20px] font-pixel bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent leading-relaxed text-center">
+    The Million Solana Memepage
+  </h1>
+));
+
+const LiveIndicator = memo(() => (
+  <span className="absolute -top-1 -right-1 px-1 py-0.5 bg-[#ea384c] text-white text-[8px] font-pixel rounded animate-pulse">
+    LIVE
+  </span>
+));
+
 const Index = () => {
   const [totalSold, setTotalSold] = useState(0);
   const totalPixels = 1000000;
@@ -24,9 +37,8 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1A1F2C] to-[#2D243F] overflow-auto">
+    <div className="min-h-screen bg-gradient-to-b from-[#1A1F2C] to-[#2D243F]">
       <div className="container mx-auto px-2 min-h-screen flex flex-col">
-        {/* Header */}
         <header className="py-1">
           <div className="flex flex-col md:flex-row items-center justify-between bg-[#1A1F2C] rounded-lg p-2 border border-solana-purple/20 gap-2 md:gap-0">
             <div className="flex items-center gap-2 order-2 md:order-1">
@@ -44,15 +56,11 @@ const Index = () => {
               </div>
             </div>
 
-            <h1 className="text-[14px] md:text-[20px] font-pixel bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent leading-relaxed text-center order-1 md:order-2">
-              The Million Solana Memepage
-            </h1>
+            <Header />
 
             <div className="flex items-center gap-2 order-3">
               <div className="relative">
-                <span className="absolute -top-1 -right-1 px-1 py-0.5 bg-[#ea384c] text-white text-[8px] font-pixel rounded animate-pulse">
-                  LIVE
-                </span>
+                <LiveIndicator />
                 <div className="bg-[#2D243F]/50 rounded-lg border border-solana-purple/20 px-2 py-1">
                   <span className="text-white font-pixel text-[8px]">
                     {totalPixels - totalSold} Available
@@ -98,7 +106,7 @@ const Index = () => {
           </Button>
         </div>
         
-        <div id="grid" className="flex-1 -mx-2 md:mx-0">
+        <div className="flex-1 -mx-2 md:mx-0">
           <PixelGrid 
             onPixelSold={() => setTotalSold(prev => prev + 1)} 
             onBuyPixelsClick={handleBuyPixelsClick}

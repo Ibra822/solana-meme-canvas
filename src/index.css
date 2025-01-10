@@ -44,12 +44,9 @@
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-tap-highlight-color: transparent;
-  }
-
-  @media (max-width: 768px) {
-    body {
-      -webkit-overflow-scrolling: touch;
-    }
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -63,13 +60,7 @@
   position: relative;
   border: 2px solid rgba(153, 69, 255, 0.3);
   overflow: hidden;
-}
-
-@media (max-width: 768px) {
-  .pixel-grid {
-    border-width: 1px;
-    margin: 0 -8px;
-  }
+  will-change: transform;
 }
 
 .pixel {
@@ -85,12 +76,7 @@
   padding: 0;
   box-sizing: border-box;
   touch-action: none;
-}
-
-@media (hover: hover) {
-  .pixel:hover {
-    background: rgba(153, 69, 255, 0.2);
-  }
+  will-change: transform;
 }
 
 .pixel.taken {
@@ -117,32 +103,6 @@
   box-shadow: 0 0 10px rgba(153, 69, 255, 0.1);
 }
 
-@media (hover: hover) {
-  .pixel.block-start:hover::before,
-  .pixel.selecting.block-start::before {
-    opacity: 1;
-    background: rgba(153, 69, 255, 0.2);
-    border: 1px solid rgba(153, 69, 255, 0.8);
-    box-shadow: 0 0 15px rgba(153, 69, 255, 0.2);
-  }
-}
-
-/* Custom styles for mobile touch interactions */
-@media (max-width: 768px) {
-  .pixel.block-start::before {
-    border-width: 2px;
-    opacity: 0.8;
-  }
-
-  .pixel.selecting.block-start::before {
-    opacity: 1;
-    background: rgba(153, 69, 255, 0.3);
-    border: 2px solid rgba(153, 69, 255, 1);
-    box-shadow: 0 0 20px rgba(153, 69, 255, 0.3);
-  }
-}
-
-/* Wallet Adapter Custom Styles */
 .wallet-adapter-modal {
   @apply font-pixel;
 }
@@ -151,13 +111,6 @@
   @apply bg-[#1A1F2C] border border-solana-purple/20;
   max-width: 90vw;
   margin: 1rem;
-}
-
-@media (min-width: 768px) {
-  .wallet-adapter-modal-wrapper {
-    max-width: 500px;
-    margin: 2rem;
-  }
 }
 
 .wallet-adapter-button {
@@ -172,25 +125,44 @@
   @apply w-5 h-5 md:w-6 md:h-6;
 }
 
-/* Page Transition Animations */
-.page-transition-enter {
-  opacity: 0;
-  transform: translateY(10px);
+@media (hover: hover) {
+  .pixel:hover {
+    background: rgba(153, 69, 255, 0.2);
+  }
+  
+  .pixel.block-start:hover::before,
+  .pixel.selecting.block-start::before {
+    opacity: 1;
+    background: rgba(153, 69, 255, 0.2);
+    border: 1px solid rgba(153, 69, 255, 0.8);
+    box-shadow: 0 0 15px rgba(153, 69, 255, 0.2);
+  }
 }
 
-.page-transition-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 300ms, transform 300ms;
-}
-
-.page-transition-exit {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.page-transition-exit-active {
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 300ms, transform 300ms;
+@media (max-width: 768px) {
+  body {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .pixel-grid {
+    border-width: 1px;
+    margin: 0 -8px;
+  }
+  
+  .pixel.block-start::before {
+    border-width: 2px;
+    opacity: 0.8;
+  }
+  
+  .pixel.selecting.block-start::before {
+    opacity: 1;
+    background: rgba(153, 69, 255, 0.3);
+    border: 2px solid rgba(153, 69, 255, 1);
+    box-shadow: 0 0 20px rgba(153, 69, 255, 0.3);
+  }
+  
+  .wallet-adapter-modal-wrapper {
+    max-width: 500px;
+    margin: 2rem;
+  }
 }

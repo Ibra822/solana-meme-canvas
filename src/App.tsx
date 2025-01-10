@@ -10,28 +10,24 @@ import { SolanaWalletProvider } from "./components/WalletProvider";
 const Index = lazy(() => import("./pages/Index"));
 const Purchase = lazy(() => import("./pages/Purchase"));
 
-// Configure QueryClient with optimized settings
+// Configure QueryClient with more aggressive optimization settings
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: false, // Disable retries to prevent unnecessary network requests
+      retry: false,
       refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000, // Data stays fresh for 5 minutes
-      gcTime: 10 * 60 * 1000, // Keep unused data in cache for 10 minutes
-      refetchOnMount: false, // Prevent refetching when component mounts
+      staleTime: 30 * 60 * 1000, // Data stays fresh for 30 minutes
+      gcTime: 60 * 60 * 1000, // Keep unused data in cache for 1 hour
+      refetchOnMount: false,
+      refetchOnReconnect: false,
     },
   },
 });
 
-// Simplified loading fallback with minimal animation
+// Ultra-lightweight loading fallback
 const LoadingFallback = () => (
-  <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1A1F2C] to-[#2D243F]">
-    <div className="flex flex-col items-center space-y-4">
-      <div className="w-8 h-8 border-4 border-solana-purple border-t-transparent rounded-full animate-spin"></div>
-      <div className="text-solana-purple font-pixel text-sm animate-pulse">
-        Loading...
-      </div>
-    </div>
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="w-8 h-8 border-4 border-solana-purple border-t-transparent rounded-full animate-spin" />
   </div>
 );
 
