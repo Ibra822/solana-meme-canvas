@@ -33,6 +33,7 @@
   * {
     @apply border-border;
   }
+  
   body {
     @apply bg-[#1A1F2C] text-foreground;
     font-family: 'Press Start 2P', cursive;
@@ -42,6 +43,13 @@
     height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  @media (max-width: 768px) {
+    body {
+      -webkit-overflow-scrolling: touch;
+    }
   }
 }
 
@@ -57,6 +65,13 @@
   overflow: hidden;
 }
 
+@media (max-width: 768px) {
+  .pixel-grid {
+    border-width: 1px;
+    margin: 0 -8px;
+  }
+}
+
 .pixel {
   width: 1px;
   height: 1px;
@@ -69,10 +84,13 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  touch-action: none;
 }
 
-.pixel:hover {
-  background: rgba(153, 69, 255, 0.2);
+@media (hover: hover) {
+  .pixel:hover {
+    background: rgba(153, 69, 255, 0.2);
+  }
 }
 
 .pixel.taken {
@@ -99,52 +117,29 @@
   box-shadow: 0 0 10px rgba(153, 69, 255, 0.1);
 }
 
-.pixel.block-start:hover::before,
-.pixel.selecting.block-start::before {
-  opacity: 1;
-  background: rgba(153, 69, 255, 0.2);
-  border: 1px solid rgba(153, 69, 255, 0.8);
-  box-shadow: 0 0 15px rgba(153, 69, 255, 0.2);
-}
-
-@keyframes pulse {
-  0%, 100% {
+@media (hover: hover) {
+  .pixel.block-start:hover::before,
+  .pixel.selecting.block-start::before {
     opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
+    background: rgba(153, 69, 255, 0.2);
+    border: 1px solid rgba(153, 69, 255, 0.8);
+    box-shadow: 0 0 15px rgba(153, 69, 255, 0.2);
   }
 }
 
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
+/* Custom styles for mobile touch interactions */
 @media (max-width: 768px) {
-  .pixel-grid {
-    touch-action: manipulation;
+  .pixel.block-start::before {
+    border-width: 2px;
+    opacity: 0.8;
   }
-  
-  .pixel {
-    touch-action: manipulation;
-  }
-}
 
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
+  .pixel.selecting.block-start::before {
+    opacity: 1;
+    background: rgba(153, 69, 255, 0.3);
+    border: 2px solid rgba(153, 69, 255, 1);
+    box-shadow: 0 0 20px rgba(153, 69, 255, 0.3);
   }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.btn-animated {
-  background-size: 200% 200%;
-  animation: gradient 3s ease infinite;
 }
 
 /* Wallet Adapter Custom Styles */
@@ -154,42 +149,27 @@
 
 .wallet-adapter-modal-wrapper {
   @apply bg-[#1A1F2C] border border-solana-purple/20;
+  max-width: 90vw;
+  margin: 1rem;
 }
 
-.wallet-adapter-modal-button-close {
-  @apply bg-solana-purple/20 text-white;
-}
-
-.wallet-adapter-modal-title {
-  @apply text-[16px] bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent;
-}
-
-.wallet-adapter-modal-list {
-  @apply grid grid-cols-2 gap-4;
+@media (min-width: 768px) {
+  .wallet-adapter-modal-wrapper {
+    max-width: 500px;
+    margin: 2rem;
+  }
 }
 
 .wallet-adapter-button {
-  @apply bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[12px] h-14 justify-center items-center px-6 transition-all duration-300 ease-in-out;
+  @apply bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[10px] md:text-[12px] h-12 md:h-14 justify-center items-center px-4 md:px-6 transition-all duration-300 ease-in-out;
 }
 
 .wallet-adapter-button-trigger {
-  @apply min-w-[200px];
+  @apply min-w-[160px] md:min-w-[200px];
 }
 
 .wallet-adapter-button img {
-  @apply w-6 h-6;
-}
-
-.wallet-adapter-modal-list-more {
-  @apply text-solana-purple hover:text-solana-blue transition-colors;
-}
-
-.wallet-adapter-dropdown-list {
-  @apply bg-[#1A1F2C] border border-solana-purple/20;
-}
-
-.wallet-adapter-dropdown-list-item {
-  @apply text-white hover:bg-solana-purple/20 transition-colors;
+  @apply w-5 h-5 md:w-6 md:h-6;
 }
 
 /* Page Transition Animations */
@@ -213,14 +193,4 @@
   opacity: 0;
   transform: translateY(-10px);
   transition: opacity 300ms, transform 300ms;
-}
-
-/* Selection Grid Styles */
-.selection-grid-modal {
-  @apply fixed inset-0 bg-black/80 backdrop-blur-sm z-50;
-}
-
-.selection-grid-content {
-  @apply fixed inset-4 bg-[#1A1F2C] border border-solana-purple/20 rounded-lg overflow-hidden;
-  max-height: calc(100vh - 2rem);
 }
