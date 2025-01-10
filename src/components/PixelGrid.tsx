@@ -24,6 +24,12 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
     // Connect to WebSocket when component mounts
     websocketService.connect();
 
+    // Initialize with mock data if available
+    const mockData = websocketService.getMockData();
+    if (mockData.size > 0) {
+      setTakenPixels(new Map(mockData));
+    }
+
     // Subscribe to pixel updates
     const unsubscribe = websocketService.subscribe(message => {
       if (message.type === 'pixelUpdate') {
@@ -37,6 +43,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
 
     return () => {
       unsubscribe();
+      websocketService.disconnect();
     };
   }, []);
 
@@ -139,7 +146,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
     <div className="w-full h-full flex flex-col">
       <div 
         ref={gridRef}
-        className="pixel-grid relative w-full aspect-square"
+        className="pixel-grid relative w-full aspect-square overflow-auto"
         style={{
           width: '100%',
           maxWidth: '1000px',
