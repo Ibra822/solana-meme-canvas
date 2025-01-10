@@ -21,10 +21,11 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   const [scale, setScale] = useState(1);
   const [visibleChunks, setVisibleChunks] = useState<number[]>([]);
   const [hoveredPixel, setHoveredPixel] = useState<PixelData | null>(null);
+  const wsRef = useRef<WebSocket | null>(null);
 
   // Memoize websocket connection and subscription
   useEffect(() => {
-    const ws = websocketService.connect();
+    wsRef.current = websocketService.connect();
     const unsubscribe = websocketService.subscribe(message => {
       if (message.type === 'pixelUpdate') {
         setTakenPixels(prev => {
@@ -37,7 +38,9 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
 
     return () => {
       unsubscribe();
-      ws.close();
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
     };
   }, []);
 
