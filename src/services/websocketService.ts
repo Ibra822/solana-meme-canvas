@@ -12,7 +12,7 @@ class WebSocketService {
   private ws: WebSocket | null = null;
   private messageHandlers: ((message: WebSocketMessage) => void)[] = [];
 
-  connect() {
+  connect(): WebSocket {
     this.ws = new WebSocket('wss://your-websocket-server.com');
 
     this.ws.onmessage = (event) => {
@@ -26,6 +26,8 @@ class WebSocketService {
       // Attempt to reconnect after a delay
       setTimeout(() => this.connect(), 5000);
     };
+
+    return this.ws;
   }
 
   subscribe(handler: (message: WebSocketMessage) => void) {
