@@ -9,7 +9,7 @@ import { websocketService } from '../services/websocketService';
 const GRID_SIZE = 1000;
 const BLOCK_SIZE = 10;
 const CHUNK_SIZE = 100;
-const VIEWPORT_PADDING = 1; // Number of chunks to render outside viewport
+const VIEWPORT_PADDING = 1;
 
 const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   const [takenPixels, setTakenPixels] = useState<Map<number, PixelData>>(new Map());
@@ -21,27 +21,39 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   const [scale, setScale] = useState(1);
   const [visibleChunks, setVisibleChunks] = useState<number[]>([]);
   const [hoveredPixel, setHoveredPixel] = useState<PixelData | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting');
   const wsRef = useRef<WebSocket | null>(null);
 
-  // Memoize websocket connection and subscription
   useEffect(() => {
-    wsRef.current = websocketService.connect();
-    const unsubscribe = websocketService.subscribe(message => {
-      if (message.type === 'pixelUpdate') {
-        setTakenPixels(prev => {
-          const newMap = new Map(prev);
-          newMap.set(message.data.index, message.data.pixelData);
-          return newMap;
-        });
-      }
-    });
+    try {
+      wsRef.current = websocketService.connect();
+      setConnectionStatus('connected');
 
-    return () => {
-      unsubscribe();
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
-    };
+      const unsubscribe = websocketService.subscribe(message => {
+        if (message.type === 'pixelUpdate') {
+          setTakenPixels(prev => {
+            const newMap = new Map(prev);
+            newMap.set(message.data.index, message.data.pixelData);
+            return newMap;
+          });
+        }
+      });
+
+      return () => {
+        unsubscribe();
+        if (wsRef.current) {
+          wsRef.current.close();
+        }
+      };
+    } catch (error) {
+      console.error('Failed to establish WebSocket connection:', error);
+      setConnectionStatus('disconnected');
+      toast({
+        title: "Connection Error",
+        description: "Unable to establish real-time connection. Some features may be limited.",
+        variant: "destructive"
+      });
+    }
   }, []);
 
   // Optimize visible chunks calculation with debounce
@@ -142,6 +154,12 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
 
   return (
     <div className="w-full h-full flex flex-col relative">
+      {connectionStatus === 'disconnected' && (
+        <div className="bg-destructive/10 text-destructive px-4 py-2 rounded-md mb-4 text-sm">
+          Connection lost. Some features may be limited. Please refresh the page.
+        </div>
+      )}
+      
       <div 
         ref={gridRef}
         className="pixel-grid relative w-full aspect-square overflow-auto"
