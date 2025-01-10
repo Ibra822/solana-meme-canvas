@@ -10,14 +10,14 @@ import { SolanaWalletProvider } from "./components/WalletProvider";
 const Index = lazy(() => import("./pages/Index"));
 const Purchase = lazy(() => import("./pages/Purchase"));
 
-// Configure QueryClient with more aggressive optimization settings
+// Configure QueryClient with aggressive optimization settings
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: false,
+      retry: 1,
       refetchOnWindowFocus: false,
-      staleTime: 30 * 60 * 1000, // Data stays fresh for 30 minutes
-      gcTime: 60 * 60 * 1000, // Keep unused data in cache for 1 hour
+      staleTime: 5 * 60 * 1000, // Data stays fresh for 5 minutes
+      gcTime: 10 * 60 * 1000, // Keep unused data in cache for 10 minutes
       refetchOnMount: false,
       refetchOnReconnect: false,
     },
@@ -26,8 +26,8 @@ const queryClient = new QueryClient({
 
 // Ultra-lightweight loading fallback
 const LoadingFallback = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="w-8 h-8 border-4 border-solana-purple border-t-transparent rounded-full animate-spin" />
+  <div className="fixed inset-0 flex items-center justify-center bg-background/50">
+    <div className="w-6 h-6 border-2 border-solana-purple border-t-transparent rounded-full animate-spin" />
   </div>
 );
 
