@@ -55,6 +55,8 @@
   position: relative;
   border: 2px solid rgba(153, 69, 255, 0.3);
   overflow: hidden;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .pixel {
@@ -69,6 +71,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  will-change: transform, background-color;
+  backface-visibility: hidden;
 }
 
 .pixel:hover {

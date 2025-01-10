@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { toast } from '../components/ui/use-toast';
 import PurchaseModal from './PurchaseModal';
 import { calculatePixelPrice } from '../utils/pixelPricing';
@@ -9,6 +9,7 @@ import { websocketService } from '../services/websocketService';
 const GRID_SIZE = 1000;
 const BLOCK_SIZE = 10;
 const CHUNK_SIZE = 100;
+const VIEWPORT_PADDING = 1; // Number of chunks to render outside viewport
 
 const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   const [takenPixels, setTakenPixels] = useState<Map<number, PixelData>>(new Map());
@@ -21,9 +22,9 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   const [visibleChunks, setVisibleChunks] = useState<number[]>([]);
   const [hoveredPixel, setHoveredPixel] = useState<PixelData | null>(null);
 
+  // Memoize websocket connection and subscription
   useEffect(() => {
-    websocketService.connect();
-
+    const ws = websocketService.connect();
     const unsubscribe = websocketService.subscribe(message => {
       if (message.type === 'pixelUpdate') {
         setTakenPixels(prev => {
@@ -36,38 +37,49 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
 
     return () => {
       unsubscribe();
+      ws.close();
     };
   }, []);
 
+  // Optimize visible chunks calculation with debounce
   useEffect(() => {
+    let timeoutId: number;
+    
     const calculateVisibleChunks = () => {
       if (!gridRef.current) return;
+      
       const grid = gridRef.current;
       const rect = grid.getBoundingClientRect();
-      const chunks: number[] = [];
+      const chunks = new Set<number>();
       
-      const startChunkX = Math.floor(grid.scrollLeft / CHUNK_SIZE);
-      const startChunkY = Math.floor(grid.scrollTop / CHUNK_SIZE);
-      const endChunkX = Math.ceil((grid.scrollLeft + rect.width) / CHUNK_SIZE);
-      const endChunkY = Math.ceil((grid.scrollTop + rect.height) / CHUNK_SIZE);
+      const startChunkX = Math.max(0, Math.floor(grid.scrollLeft / (CHUNK_SIZE * scale)) - VIEWPORT_PADDING);
+      const startChunkY = Math.max(0, Math.floor(grid.scrollTop / (CHUNK_SIZE * scale)) - VIEWPORT_PADDING);
+      const endChunkX = Math.min(
+        GRID_SIZE / CHUNK_SIZE,
+        Math.ceil((grid.scrollLeft + rect.width) / (CHUNK_SIZE * scale)) + VIEWPORT_PADDING
+      );
+      const endChunkY = Math.min(
+        GRID_SIZE / CHUNK_SIZE,
+        Math.ceil((grid.scrollTop + rect.height) / (CHUNK_SIZE * scale)) + VIEWPORT_PADDING
+      );
 
       for (let y = startChunkY; y < endChunkY; y++) {
         for (let x = startChunkX; x < endChunkX; x++) {
-          if (x < GRID_SIZE / CHUNK_SIZE && y < GRID_SIZE / CHUNK_SIZE) {
-            chunks.push(y * (GRID_SIZE / CHUNK_SIZE) + x);
-          }
+          chunks.add(y * (GRID_SIZE / CHUNK_SIZE) + x);
         }
       }
-      setVisibleChunks(chunks);
+      
+      setVisibleChunks(Array.from(chunks));
     };
 
     const handleScroll = () => {
-      requestAnimationFrame(calculateVisibleChunks);
+      window.cancelAnimationFrame(timeoutId);
+      timeoutId = window.requestAnimationFrame(calculateVisibleChunks);
     };
 
     const gridElement = gridRef.current;
     if (gridElement) {
-      gridElement.addEventListener('scroll', handleScroll);
+      gridElement.addEventListener('scroll', handleScroll, { passive: true });
       calculateVisibleChunks();
     }
 
@@ -75,8 +87,9 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
       if (gridElement) {
         gridElement.removeEventListener('scroll', handleScroll);
       }
+      window.cancelAnimationFrame(timeoutId);
     };
-  }, []);
+  }, [scale]);
 
   const handlePixelClick = (index: number) => {
     if (!isSelecting) {
@@ -87,7 +100,6 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
       const pixelData = takenPixels.get(blockStartIndex);
       if (pixelData?.link) {
         window.open(pixelData.link, '_blank');
-        return;
       }
     }
   };
@@ -98,18 +110,38 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
     const blockStartIndex = blockStartY * GRID_SIZE + blockStartX;
     
     const pixelData = takenPixels.get(blockStartIndex);
-    if (pixelData) {
-      setHoveredPixel(pixelData);
-    } else {
-      setHoveredPixel(null);
-    }
+    setHoveredPixel(pixelData || null);
   };
+
+  // Memoize grid chunks to prevent unnecessary rerenders
+  const gridChunks = useMemo(() => {
+    return visibleChunks.map(chunkIndex => {
+      const chunkStartX = (chunkIndex % (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
+      const chunkStartY = Math.floor(chunkIndex / (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
+      
+      return (
+        <GridChunk
+          key={chunkIndex}
+          chunkIndex={chunkIndex}
+          chunkStartX={chunkStartX}
+          chunkStartY={chunkStartY}
+          GRID_SIZE={GRID_SIZE}
+          CHUNK_SIZE={CHUNK_SIZE}
+          BLOCK_SIZE={BLOCK_SIZE}
+          takenPixels={takenPixels}
+          isSelecting={isSelecting}
+          handlePixelClick={handlePixelClick}
+          handlePixelHover={handlePixelHover}
+        />
+      );
+    });
+  }, [visibleChunks, takenPixels, isSelecting]);
 
   return (
     <div className="w-full h-full flex flex-col relative">
       <div 
         ref={gridRef}
-        className="pixel-grid relative w-full aspect-square"
+        className="pixel-grid relative w-full aspect-square overflow-auto"
         style={{
           width: '100%',
           maxWidth: '1000px',
@@ -128,35 +160,18 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
             transformOrigin: '0 0'
           }}
         >
-          {visibleChunks.map(chunkIndex => {
-            const chunkStartX = (chunkIndex % (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
-            const chunkStartY = Math.floor(chunkIndex / (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE;
-            
-            return (
-              <GridChunk
-                key={chunkIndex}
-                chunkIndex={chunkIndex}
-                chunkStartX={chunkStartX}
-                chunkStartY={chunkStartY}
-                GRID_SIZE={GRID_SIZE}
-                CHUNK_SIZE={CHUNK_SIZE}
-                BLOCK_SIZE={BLOCK_SIZE}
-                takenPixels={takenPixels}
-                isSelecting={isSelecting}
-                handlePixelClick={handlePixelClick}
-                handlePixelHover={handlePixelHover}
-              />
-            );
-          })}
+          {gridChunks}
         </div>
       </div>
 
       {hoveredPixel && (
-        <div className="absolute bg-black/80 text-white p-2 rounded text-sm pointer-events-none"
-             style={{
-               left: `${hoveredPixel.x}px`,
-               top: `${hoveredPixel.y - 30}px`
-             }}>
+        <div 
+          className="absolute bg-black/80 text-white p-2 rounded text-sm pointer-events-none"
+          style={{
+            left: `${hoveredPixel.x}px`,
+            top: `${hoveredPixel.y - 30}px`
+          }}
+        >
           {hoveredPixel.memecoinName}
         </div>
       )}
