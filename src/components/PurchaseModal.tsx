@@ -2,6 +2,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import SelectionGrid from './grid/SelectionGrid';
 import ImageUploadStep from './purchase/ImageUploadStep';
 import LinkInputStep from './purchase/LinkInputStep';
@@ -30,6 +32,7 @@ const PurchaseModal = ({
   const [image, setImage] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [link, setLink] = useState("");
+  const [memecoinName, setMemecoinName] = useState("");
   const [selectedBlocks, setSelectedBlocks] = useState<number[]>([]);
 
   const totalCost = selectedBlocks.length * BLOCK_PRICE;
@@ -62,6 +65,7 @@ const PurchaseModal = ({
     setImage(null);
     setImagePreviewUrl(null);
     setLink("");
+    setMemecoinName("");
   };
 
   return (
@@ -78,15 +82,26 @@ const PurchaseModal = ({
 
         {currentStep === 'initial' && (
           <div className="grid gap-6">
-            <div className="flex flex-col gap-3 pt-2">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="memecoinName" className="text-white/90 font-pixel text-[10px]">Your Memecoin Name</Label>
+                <Input
+                  id="memecoinName"
+                  value={memecoinName}
+                  onChange={(e) => setMemecoinName(e.target.value)}
+                  className="bg-[#2D243F]/50 border-solana-purple/20 text-[8px] font-pixel h-8"
+                  placeholder="Enter your memecoin name"
+                />
+              </div>
+              
               <Button
                 onClick={() => setCurrentStep('select')}
-                className="bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8"
+                className="w-full bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8"
               >
                 Choose Blocks
               </Button>
               
-              <p className="text-center text-[8px] font-pixel text-white/70 mt-2">
+              <p className="text-center text-[8px] font-pixel text-white/70">
                 Need help? Contact us via{" "}
                 <a 
                   href="https://t.me/secelev" 
@@ -102,11 +117,13 @@ const PurchaseModal = ({
         )}
 
         {currentStep === 'select' && (
-          <SelectionGrid
-            takenPixels={takenPixels}
-            onSelectionConfirm={handleSelectionConfirm}
-            onClose={() => setCurrentStep('initial')}
-          />
+          <div className="flex flex-col h-full">
+            <SelectionGrid
+              takenPixels={takenPixels}
+              onSelectionConfirm={handleSelectionConfirm}
+              onClose={() => setCurrentStep('initial')}
+            />
+          </div>
         )}
 
         {currentStep === 'upload' && (
@@ -134,6 +151,14 @@ const PurchaseModal = ({
             onSuccess={handlePaymentSuccess}
             recipientAddress={WALLET_ADDRESS}
           />
+        )}
+
+        {selectedBlocks.length > 0 && currentStep !== 'select' && (
+          <div className="mt-4 pt-4 border-t border-solana-purple/20">
+            <p className="text-[10px] font-pixel text-white/90">
+              Total: {totalCost} SOL
+            </p>
+          </div>
         )}
       </DialogContent>
     </Dialog>
