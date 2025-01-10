@@ -55,8 +55,6 @@
   position: relative;
   border: 2px solid rgba(153, 69, 255, 0.3);
   overflow: hidden;
-  will-change: transform;
-  backface-visibility: hidden;
 }
 
 .pixel {
@@ -71,8 +69,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  will-change: transform, background-color;
-  backface-visibility: hidden;
 }
 
 .pixel:hover {
@@ -109,6 +105,12 @@
   background: rgba(153, 69, 255, 0.2);
   border: 1px solid rgba(153, 69, 255, 0.8);
   box-shadow: 0 0 15px rgba(153, 69, 255, 0.2);
+}
+
+.pixel.selecting.block-start::before {
+  background: rgba(153, 69, 255, 0.3);
+  border: 1px solid rgba(153, 69, 255, 1);
+  box-shadow: 0 0 20px rgba(153, 69, 255, 0.3);
 }
 
 @keyframes pulse {

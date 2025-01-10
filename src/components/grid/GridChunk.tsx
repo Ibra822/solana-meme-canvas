@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import { PixelData } from './types';
 
 interface GridChunkProps {
@@ -11,10 +10,9 @@ interface GridChunkProps {
   takenPixels: Map<number, PixelData>;
   isSelecting: boolean;
   handlePixelClick: (index: number) => void;
-  handlePixelHover: (index: number) => void;
 }
 
-const GridChunk = memo(({
+const GridChunk = ({
   chunkIndex,
   chunkStartX,
   chunkStartY,
@@ -24,7 +22,6 @@ const GridChunk = memo(({
   takenPixels,
   isSelecting,
   handlePixelClick,
-  handlePixelHover,
 }: GridChunkProps) => {
   const pixels = [];
 
@@ -41,11 +38,10 @@ const GridChunk = memo(({
       pixels.push(
         <div
           key={pixelIndex}
-          className={`pixel ${pixelData ? 'taken' : ''} ${
+          className={`pixel ${takenPixels.has(blockStartIndex) ? 'taken' : ''} ${
             isBlockStart ? 'block-start' : ''
           } ${isSelecting ? 'selecting' : ''}`}
           onClick={() => handlePixelClick(pixelIndex)}
-          onMouseEnter={() => handlePixelHover(pixelIndex)}
           style={{
             backgroundImage: pixelData?.imageUrl ? `url(${pixelData.imageUrl})` : 'none',
             backgroundSize: `${BLOCK_SIZE}px ${BLOCK_SIZE}px`,
@@ -73,8 +69,6 @@ const GridChunk = memo(({
       {pixels}
     </div>
   );
-});
-
-GridChunk.displayName = 'GridChunk';
+};
 
 export default GridChunk;
