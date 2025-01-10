@@ -16,13 +16,14 @@ const queryClient = new QueryClient({
     queries: {
       retry: false, // Disable retries to prevent unnecessary network requests
       refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000,
-      gcTime: 10 * 60 * 1000,
+      staleTime: 5 * 60 * 1000, // Data stays fresh for 5 minutes
+      gcTime: 10 * 60 * 1000, // Keep unused data in cache for 10 minutes
       refetchOnMount: false, // Prevent refetching when component mounts
     },
   },
 });
 
+// Simplified loading fallback with minimal animation
 const LoadingFallback = () => (
   <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1A1F2C] to-[#2D243F]">
     <div className="flex flex-col items-center space-y-4">
