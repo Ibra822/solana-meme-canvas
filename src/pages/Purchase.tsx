@@ -8,6 +8,7 @@ import SelectionGrid from '../components/grid/SelectionGrid';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { PixelData } from '../components/grid/types';
 
 const Purchase = () => {
   const navigate = useNavigate();
@@ -17,6 +18,8 @@ const Purchase = () => {
   const [isGridOpen, setIsGridOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { connected } = useWallet();
+  // Initialize empty Map for takenPixels
+  const [takenPixels] = useState<Map<number, PixelData>>(new Map());
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -129,6 +132,7 @@ const Purchase = () => {
           <SelectionGrid
             onSelectionConfirm={handlePixelSelection}
             onClose={() => setIsGridOpen(false)}
+            takenPixels={takenPixels}
           />
         </DialogContent>
       </Dialog>
