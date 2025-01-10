@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Stats from '../components/Stats';
 import PixelGrid from '../components/PixelGrid';
 import { Button } from '../components/ui/button';
@@ -14,10 +15,10 @@ const Index = () => {
   const [totalSold, setTotalSold] = useState(0);
   const totalPixels = 1000000;
   const [aboutOpen, setAboutOpen] = useState(false);
-  const [isSelecting, setIsSelecting] = useState(false);
+  const navigate = useNavigate();
 
   const handleBuyPixelsClick = () => {
-    setIsSelecting(prev => !prev);
+    navigate('/purchase');
   };
 
   return (
