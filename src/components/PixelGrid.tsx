@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, memo } from 'react';
 import { toast } from '../components/ui/use-toast';
 import PurchaseModal from './PurchaseModal';
 import { calculatePixelPrice } from '../utils/pixelPricing';
@@ -9,6 +9,8 @@ import { websocketService } from '../services/websocketService';
 const GRID_SIZE = 1000;
 const BLOCK_SIZE = 10;
 const CHUNK_SIZE = 100;
+
+const MemoizedGridChunk = memo(GridChunk);
 
 const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   const [takenPixels, setTakenPixels] = useState<Map<number, PixelData>>(new Map());
@@ -42,9 +44,11 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   }, []);
 
   useEffect(() => {
+    let isSubscribed = true;
     websocketService.connect();
 
     const handlePixelUpdate = (message: any) => {
+      if (!isSubscribed) return;
       if (message.type === 'pixelUpdate') {
         setTakenPixels(prev => {
           const newMap = new Map(prev);
@@ -56,6 +60,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
 
     const unsubscribe = websocketService.subscribe(handlePixelUpdate);
     return () => {
+      isSubscribed = false;
       unsubscribe();
     };
   }, []);
@@ -146,7 +151,8 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
           backgroundColor: '#fff',
           border: '1px solid rgba(153, 69, 255, 0.3)',
           boxShadow: '0 0 20px rgba(153, 69, 255, 0.1)',
-          overflow: 'auto'
+          overflow: 'auto',
+          willChange: 'transform'
         }}
       >
         <div 
@@ -160,7 +166,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
           }}
         >
           {visibleChunks.map(chunkIndex => (
-            <GridChunk
+            <MemoizedGridChunk
               key={chunkIndex}
               chunkIndex={chunkIndex}
               chunkStartX={(chunkIndex % (GRID_SIZE / CHUNK_SIZE)) * CHUNK_SIZE}
