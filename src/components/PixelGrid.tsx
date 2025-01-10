@@ -20,8 +20,6 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   const [scale, setScale] = useState(1);
   const [visibleChunks, setVisibleChunks] = useState<number[]>([]);
   const [hoveredPixel, setHoveredPixel] = useState<PixelData | null>(null);
-  const hoverTimeoutRef = useRef<number | null>(null);
-  const lastHoverIndexRef = useRef<number>(-1);
 
   useEffect(() => {
     websocketService.connect();
@@ -38,9 +36,6 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
 
     return () => {
       unsubscribe();
-      if (hoverTimeoutRef.current) {
-        window.clearTimeout(hoverTimeoutRef.current);
-      }
     };
   }, []);
 
@@ -98,39 +93,13 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
   };
 
   const handlePixelHover = (index: number) => {
-    // Prevent unnecessary updates if hovering over the same pixel
-    if (lastHoverIndexRef.current === index) return;
-    lastHoverIndexRef.current = index;
-
-    // Clear any existing timeout
-    if (hoverTimeoutRef.current) {
-      window.clearTimeout(hoverTimeoutRef.current);
-    }
-
-    // If mouse leaves pixel
-    if (index === -1) {
-      hoverTimeoutRef.current = window.setTimeout(() => {
-        setHoveredPixel(null);
-      }, 100);
-      return;
-    }
-
     const blockStartX = Math.floor((index % GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
     const blockStartY = Math.floor(Math.floor(index / GRID_SIZE) / BLOCK_SIZE) * BLOCK_SIZE;
     const blockStartIndex = blockStartY * GRID_SIZE + blockStartX;
     
     const pixelData = takenPixels.get(blockStartIndex);
     if (pixelData) {
-      const rect = gridRef.current?.getBoundingClientRect();
-      if (rect) {
-        const x = ((index % GRID_SIZE) * scale) + rect.left;
-        const y = (Math.floor(index / GRID_SIZE) * scale) + rect.top;
-        
-        // Debounce the hover state update
-        hoverTimeoutRef.current = window.setTimeout(() => {
-          setHoveredPixel({ ...pixelData, x, y });
-        }, 50);
-      }
+      setHoveredPixel(pixelData);
     } else {
       setHoveredPixel(null);
     }
@@ -147,9 +116,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
           margin: '0 auto',
           backgroundColor: '#fff',
           border: '1px solid rgba(153, 69, 255, 0.3)',
-          boxShadow: '0 0 20px rgba(153, 69, 255, 0.1)',
-          overflow: 'auto',
-          willChange: 'transform'
+          boxShadow: '0 0 20px rgba(153, 69, 255, 0.1)'
         }}
       >
         <div 
@@ -158,8 +125,7 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
             width: `${GRID_SIZE}px`,
             height: `${GRID_SIZE}px`,
             transform: `scale(${scale})`,
-            transformOrigin: '0 0',
-            willChange: 'transform'
+            transformOrigin: '0 0'
           }}
         >
           {visibleChunks.map(chunkIndex => {
@@ -186,15 +152,12 @@ const PixelGrid = ({ onPixelSold, onBuyPixelsClick }: PixelGridProps) => {
       </div>
 
       {hoveredPixel && (
-        <div 
-          className="absolute bg-black/80 text-white p-2 rounded text-sm pointer-events-none z-50"
-          style={{
-            left: `${hoveredPixel.x}px`,
-            top: `${hoveredPixel.y - 30}px`,
-            willChange: 'transform'
-          }}
-        >
-          {hoveredPixel.memecoinName || 'Unnamed Project'}
+        <div className="absolute bg-black/80 text-white p-2 rounded text-sm pointer-events-none"
+             style={{
+               left: `${hoveredPixel.x}px`,
+               top: `${hoveredPixel.y - 30}px`
+             }}>
+          {hoveredPixel.memecoinName}
         </div>
       )}
 

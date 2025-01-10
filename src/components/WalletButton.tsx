@@ -30,7 +30,7 @@ const WalletButton: FC = () => {
   return (
     <Button
       variant="default"
-      className="wallet-adapter-button bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-12"
+      className="wallet-adapter-button bg-gradient-to-r from-solana-purple to-solana-blue hover:opacity-90 text-white font-pixel text-[8px] h-8"
       onClick={handleDisconnect}
       disabled={connecting}
     >

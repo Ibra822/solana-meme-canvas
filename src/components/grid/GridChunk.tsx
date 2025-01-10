@@ -1,4 +1,16 @@
-import { PixelData, GridChunkProps } from './types';
+import { PixelData } from './types';
+
+interface GridChunkProps {
+  chunkIndex: number;
+  chunkStartX: number;
+  chunkStartY: number;
+  GRID_SIZE: number;
+  CHUNK_SIZE: number;
+  BLOCK_SIZE: number;
+  takenPixels: Map<number, PixelData>;
+  isSelecting: boolean;
+  handlePixelClick: (index: number) => void;
+}
 
 const GridChunk = ({
   chunkIndex,
@@ -10,7 +22,6 @@ const GridChunk = ({
   takenPixels,
   isSelecting,
   handlePixelClick,
-  handlePixelHover,
 }: GridChunkProps) => {
   const pixels = [];
 
@@ -31,8 +42,6 @@ const GridChunk = ({
             isBlockStart ? 'block-start' : ''
           } ${isSelecting ? 'selecting' : ''}`}
           onClick={() => handlePixelClick(pixelIndex)}
-          onMouseEnter={() => handlePixelHover(pixelIndex)}
-          onMouseLeave={() => handlePixelHover(-1)}
           style={{
             backgroundImage: pixelData?.imageUrl ? `url(${pixelData.imageUrl})` : 'none',
             backgroundSize: `${BLOCK_SIZE}px ${BLOCK_SIZE}px`,

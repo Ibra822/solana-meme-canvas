@@ -10,7 +10,6 @@ import {
 } from '@solana/wallet-adapter-wallets';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { clusterApiUrl } from '@solana/web3.js';
-import { toast } from "@/components/ui/use-toast";
 import '@solana/wallet-adapter-react-ui/styles.css';
 
 interface Props {
@@ -34,21 +33,8 @@ export const SolanaWalletProvider: FC<Props> = ({ children }) => {
 
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider 
-        wallets={wallets} 
-        autoConnect={false}
-        onError={(error) => {
-          console.error('Wallet error:', error);
-          toast({
-            title: "Wallet Error",
-            description: "Failed to connect wallet. Please try again.",
-            variant: "destructive",
-          });
-        }}
-      >
-        <WalletModalProvider>
-          {children}
-        </WalletModalProvider>
+      <WalletProvider wallets={wallets} autoConnect>
+        <WalletModalProvider>{children}</WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
   );
