@@ -8,9 +8,9 @@ import SelectionGrid from '../components/grid/SelectionGrid';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { Buffer } from 'buffer';
 
-// Polyfill Buffer for the browser environment
+// Import and configure Buffer globally
+import { Buffer } from 'buffer';
 window.Buffer = Buffer;
 
 const Purchase = () => {
